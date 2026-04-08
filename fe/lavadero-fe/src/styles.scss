@@ -1,0 +1,64 @@
+/* Global app styles */
+:root {
+  --field-gap: 16px;
+  --field-radius: 12px;
+  --field-border: #cbd5e1;
+  --field-border-focus: #2563eb;
+  --field-bg: #ffffff;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Default spacing for all form fields across the app */
+form .mat-mdc-form-field {
+  width: 100%;
+  margin-bottom: var(--field-gap);
+}
+
+/* Clear visual boundaries for all field wrappers */
+.mat-mdc-text-field-wrapper {
+  border: 1px solid var(--field-border);
+  border-radius: var(--field-radius);
+  background: var(--field-bg);
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Specific comfort and clarity for all select controls */
+.mat-mdc-select-trigger {
+  min-height: 42px;
+  align-items: center;
+}
+
+.mat-mdc-select-value {
+  font-weight: 500;
+}
+
+.mat-mdc-select-panel {
+  border: 1px solid var(--field-border);
+  border-radius: 12px !important;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12) !important;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.mat-mdc-option {
+  min-height: 44px !important;
+}
+
+/* Better spacing in containers that place fields side by side */
+.form-row,
+.form-grid,
+.filters-row,
+.date-filters {
+  gap: var(--field-gap);
+}

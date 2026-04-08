@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: lavadero-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: lavadero_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - lavadero-network
+
+  backend:
+    build:
+      context: ./be
+      dockerfile: Dockerfile
+    container_name: lavadero-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/lavadero_db
+      JWT_SECRET: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+      JWT_EXPIRATION: 86400000
+    depends_on:
+      - mongodb
+    networks:
+      - lavadero-network
+
+  frontend:
+    build:
+      context: ./fe/lavadero-fe
+      dockerfile: Dockerfile
+    container_name: lavadero-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - lavadero-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  lavadero-network:
+    driver: bridge
