@@ -181,7 +181,7 @@ import { Client, Vehicle } from '../../core/models/models';
               </div>
 
               <!-- Action Buttons -->
-              <div class="actions">
+              <div class="form-actions">
                 <button mat-raised-button type="button" (click)="onCancel()">
                   <mat-icon>cancel</mat-icon>
                   Cancelar
@@ -207,57 +207,95 @@ import { Client, Vehicle } from '../../core/models/models';
   `,
   styles: [`
     .page-container {
-      padding: 2rem;
+      padding: 24px 16px;
       max-width: 1200px;
       margin: 0 auto;
     }
 
     mat-card {
-      margin-bottom: 1rem;
+      border-radius: 12px !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      border: 1px solid #f0f0f0 !important;
+      background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+    }
+
+    mat-card-header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
     }
 
     h1 {
       margin: 0;
-      font-size: 1.75rem;
-      font-weight: 500;
+      font-size: 28px;
+      font-weight: 700;
+      color: #212121;
+      letter-spacing: -0.5px;
     }
 
     h2 {
-      margin: 0 0 1.5rem 0;
+      margin: 0 0 20px 0;
       font-size: 1.25rem;
-      font-weight: 500;
-      color: #3f51b5;
+      font-weight: 700;
+      color: #424242;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
     }
 
     h3 {
       margin: 0;
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
+      color: #424242;
     }
 
     .loading-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 4rem;
+      padding: 60px 20px;
+      min-height: 300px;
     }
 
     .section {
-      padding: 1.5rem 0;
+      padding: 24px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      border: 1px solid #f0f0f0;
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+      }
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
+      gap: 16px;
+
+      h2 {
+        margin: 0;
+        border: none;
+        padding: 0;
+      }
     }
 
     .form-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1rem;
+      gap: 16px;
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
 
     .full-width {
@@ -265,41 +303,87 @@ import { Client, Vehicle } from '../../core/models/models';
     }
 
     mat-divider {
-      margin: 1.5rem 0;
+      margin: 24px 0;
+      border-color: #f0f0f0;
     }
 
     .no-vehicles {
       text-align: center;
-      padding: 3rem;
-      color: rgba(0,0,0,0.54);
-      background-color: #f5f5f5;
-      border-radius: 8px;
+      padding: 40px 20px;
+      color: #757575;
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      border-radius: 12px;
+      border: 2px dashed #d1d5db;
     }
 
     .no-vehicles mat-icon {
-      font-size: 48px;
-      width: 48px;
-      height: 48px;
-      margin-bottom: 1rem;
+      font-size: 56px;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      opacity: 0.4;
+      color: #bdbdbd;
+    }
+
+    .no-vehicles p {
+      margin: 0;
+      font-weight: 500;
     }
 
     .vehicle-card {
-      margin-bottom: 1rem;
-      background-color: #fafafa;
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        border-color: #d1d5db;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      }
+
+      mat-card-content {
+        padding: 20px !important;
+      }
     }
 
     .vehicle-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
     }
 
-    .actions {
+    .form-actions {
       display: flex;
-      gap: 1rem;
+      gap: 12px;
       justify-content: flex-end;
-      padding-top: 1.5rem;
+      padding-top: 24px;
+      border-top: 1px solid #f0f0f0;
+      margin-top: 24px;
+      flex-wrap: wrap;
+
+      button {
+        min-width: 140px;
+        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+        &[color="primary"] {
+          box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+
+          &:hover:not(:disabled) {
+            box-shadow: 0 8px 16px rgba(25, 118, 210, 0.3);
+            transform: translateY(-2px);
+          }
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
     }
 
     button[type="submit"] mat-spinner {
@@ -309,7 +393,7 @@ import { Client, Vehicle } from '../../core/models/models';
 
     @media (max-width: 768px) {
       .page-container {
-        padding: 1rem;
+        padding: 16px;
       }
 
       .form-row {
@@ -319,14 +403,13 @@ import { Client, Vehicle } from '../../core/models/models';
       .section-header {
         flex-direction: column;
         align-items: stretch;
-        gap: 1rem;
       }
 
-      .actions {
+      .form-actions {
         flex-direction: column-reverse;
       }
 
-      .actions button {
+      .form-actions button {
         width: 100%;
       }
     }

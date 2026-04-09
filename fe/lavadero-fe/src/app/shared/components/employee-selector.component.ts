@@ -58,7 +58,7 @@ import { Employee, EmployeeRole } from '../../core/models/models';
         </mat-form-field>
       } @else {
         <!-- Select dropdown version -->
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width" floatLabel="always">
           <mat-label>{{ label }}</mat-label>
           <mat-select 
             [(value)]="value"
@@ -100,6 +100,16 @@ import { Employee, EmployeeRole } from '../../core/models/models';
       color: #666;
       margin-left: 0.5rem;
       font-style: italic;
+    }
+
+    .full-width ::ng-deep .mat-mdc-select-placeholder {
+      color: #64748b !important;
+      opacity: 0.95 !important;
+      font-weight: 400;
+    }
+
+    .full-width ::ng-deep .mat-mdc-floating-label {
+      font-weight: 600;
     }
 
     mat-spinner {

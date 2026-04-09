@@ -39,13 +39,14 @@ import { SalesReport } from '../../core/models/models';
         <mat-card-content>
           <form [formGroup]="reportForm" (ngSubmit)="generateReport()">
             <div class="date-filters">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Fecha Desde</mat-label>
+                <mat-icon matPrefix>calendar_today</mat-icon>
                 <input 
                   matInput 
                   [matDatepicker]="fromPicker" 
                   formControlName="fromDate"
-                  placeholder="Seleccione fecha">
+                  placeholder="dd/mm/yyyy">
                 <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
                 <mat-datepicker #fromPicker></mat-datepicker>
                 @if (reportForm.get('fromDate')?.invalid && reportForm.get('fromDate')?.touched) {
@@ -53,13 +54,14 @@ import { SalesReport } from '../../core/models/models';
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Fecha Hasta</mat-label>
+                <mat-icon matPrefix>calendar_today</mat-icon>
                 <input 
                   matInput 
                   [matDatepicker]="toPicker" 
                   formControlName="toDate"
-                  placeholder="Seleccione fecha">
+                  placeholder="dd/mm/yyyy">
                 <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
                 <mat-datepicker #toPicker></mat-datepicker>
                 @if (reportForm.get('toDate')?.invalid && reportForm.get('toDate')?.touched) {

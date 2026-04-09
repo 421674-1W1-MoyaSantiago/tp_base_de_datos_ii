@@ -49,19 +49,21 @@ interface InvoiceDisplay extends Invoice {
         <mat-card-content>
           <!-- Filters -->
           <form [formGroup]="filterForm" class="filters">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Rango de Fechas</mat-label>
+              <mat-icon matPrefix>date_range</mat-icon>
               <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate formControlName="fromDate" placeholder="Fecha inicio">
-                <input matEndDate formControlName="toDate" placeholder="Fecha fin">
+                <input matStartDate formControlName="fromDate" placeholder="Desde">
+                <input matEndDate formControlName="toDate" placeholder="Hasta">
               </mat-date-range-input>
               <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-date-range-picker #picker></mat-date-range-picker>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Método de Pago</mat-label>
-              <mat-select formControlName="paymentMethod">
+              <mat-icon matPrefix>payment</mat-icon>
+              <mat-select formControlName="paymentMethod" placeholder="Seleccionar">
                 <mat-option value="">Todos</mat-option>
                 <mat-option value="CASH">Efectivo</mat-option>
                 <mat-option value="CARD">Tarjeta</mat-option>

@@ -46,14 +46,26 @@ import { Employee, EmployeeRole } from '../../core/models/models';
 
       <mat-card>
         <mat-card-content>
-          <div class="filters">
-            <mat-form-field>
+          <div class="filter-controls">
+            <mat-form-field appearance="outline" class="filter-field" floatLabel="always">
               <mat-label>Filtrar por Rol</mat-label>
-              <mat-select [(value)]="selectedRole" (selectionChange)="onRoleFilterChange()">
-                <mat-option [value]="null">Todos</mat-option>
-                <mat-option [value]="EmployeeRole.OPERATOR">Operador</mat-option>
-                <mat-option [value]="EmployeeRole.ADMIN">Administrador</mat-option>
-                <mat-option [value]="EmployeeRole.CASHIER">Cajero</mat-option>
+              <mat-select [(value)]="selectedRole" (selectionChange)="onRoleFilterChange()" placeholder="Seleccione un rol">
+                <mat-option [value]="null">
+                  <mat-icon>view_module</mat-icon>
+                  Todos los Roles
+                </mat-option>
+                <mat-option [value]="EmployeeRole.OPERATOR">
+                  <mat-icon>engineering</mat-icon>
+                  Operador
+                </mat-option>
+                <mat-option [value]="EmployeeRole.ADMIN">
+                  <mat-icon>security</mat-icon>
+                  Administrador
+                </mat-option>
+                <mat-option [value]="EmployeeRole.CASHIER">
+                  <mat-icon>point_of_sale</mat-icon>
+                  Cajero
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -153,42 +165,187 @@ import { Employee, EmployeeRole } from '../../core/models/models';
   `,
   styles: [`
     .page-container {
-      padding: 2rem;
+      padding: 24px 16px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #212121;
+      letter-spacing: -0.5px;
     }
 
     .filters {
-      margin-bottom: 1rem;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      border: 1px solid #f0f0f0;
+    }
+
+    .filter-controls {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      padding: 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      border: 1px solid #f0f0f0;
+    }
+
+    .filter-field {
+      min-width: 280px;
+      flex: 1;
+
+      .mat-mdc-text-field-wrapper {
+        border-color: #d1d5db !important;
+      }
+
+      &.mat-focused .mat-mdc-text-field-wrapper {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12) !important;
+      }
+    }
+
+    mat-card {
+      border-radius: 12px !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      border: 1px solid #f0f0f0 !important;
+      background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
     }
 
     .table-container {
-      overflow-x: auto;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0f0f0;
+      margin-top: 20px;
     }
 
     table {
       width: 100%;
+      background: white;
+      border-collapse: collapse;
+    }
+
+    table ::ng-deep {
+      .mat-mdc-header-cell {
+        background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+        font-weight: 700;
+        color: #424242;
+        border-bottom: 2px solid #e5e7eb;
+        padding: 14px 16px !important;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+      }
+
+      .mat-mdc-cell {
+        padding: 14px 16px !important;
+        border-bottom: 1px solid #f0f0f0;
+        color: #616161;
+        font-size: 0.95rem;
+      }
+
+      .mat-mdc-row {
+        transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+          background-color: #f9fafb;
+
+          .mat-mdc-cell {
+            background-color: #f9fafb;
+          }
+        }
+      }
+
+      .mat-mdc-row:last-child .mat-mdc-cell {
+        border-bottom: none;
+      }
     }
 
     .actions {
       display: flex;
-      gap: 0.5rem;
+      gap: 8px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .loading, .no-data {
       text-align: center;
-      padding: 2rem;
-      color: #666;
+      padding: 40px 20px;
+      color: #757575;
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      border-radius: 8px;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1rem;
     }
 
     mat-chip {
-      font-size: 0.875rem;
+      font-size: 0.875rem !important;
+      font-weight: 500 !important;
+    }
+
+    ::ng-deep .mat-mdc-paginator {
+      background: linear-gradient(135deg, #f9fafb 0%, #f5f7fa 100%);
+      border-top: 1px solid #f0f0f0;
+    }
+
+    @media (max-width: 768px) {
+      .page-container {
+        padding: 16px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      button[mat-raised-button] {
+        width: 100%;
+      }
+
+      table ::ng-deep {
+        .mat-mdc-header-cell,
+        .mat-mdc-cell {
+          padding: 12px 8px !important;
+          font-size: 0.9rem !important;
+        }
+      }
+
+      .actions {
+        gap: 4px;
+      }
     }
   `]
 })
