@@ -39,36 +39,54 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
       } @else {
         <div class="cards">
           @for (order of sortedOrders(); track order.id) {
-            <mat-card>
+            <mat-card class="service-history-card" [class]="'service-history-card status-card-' + order.status">
               <mat-card-content>
                 <div class="card-header">
-                  <div>
+                  <div class="card-heading">
                     <div class="order-number">{{ order.orderNumber || order.id }}</div>
-                    <div class="meta">{{ order.vehicleLicensePlate }} · {{ order.serviceType }}</div>
+                    <div class="meta-row">
+                      <span class="vehicle-plate">{{ order.vehicleLicensePlate }}</span>
+                      <span class="meta-dot">•</span>
+                      <span class="service-tag">{{ getServiceTypeLabel(order.serviceType) }}</span>
+                    </div>
                   </div>
-                  <mat-chip [class]="'status-' + order.status">
-                    {{ order.status }}
+                  <mat-chip [class]="'status-chip status-' + order.status">
+                    {{ getStatusLabel(order.status) }}
                   </mat-chip>
                 </div>
-                <div class="details">
-                  <span>Cliente: {{ order.clientId }}</span>
-                  <span>Precio: \${{ order.price }}</span>
+
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <mat-icon>person</mat-icon>
+                    <div>
+                      <span class="detail-label">Cliente</span>
+                      <span class="detail-value">{{ formatClientId(order.clientId) }}</span>
+                    </div>
+                  </div>
+                  <div class="detail-item price">
+                    <mat-icon>attach_money</mat-icon>
+                    <div>
+                      <span class="detail-label">Precio</span>
+                      <span class="detail-value">\${{ order.price.toFixed(2) }}</span>
+                    </div>
+                  </div>
                 </div>
               </mat-card-content>
+
               <mat-card-actions>
-                <button mat-button class="action-btn action-secondary" (click)="viewDetail(order)">Ver detalle</button>
+                <button mat-flat-button class="action-btn action-secondary" (click)="viewDetail(order)">Ver detalle</button>
                 @if (order.status === ServiceStatus.PENDING) {
-                  <button mat-button class="action-btn action-primary" (click)="changeStatus(order, ServiceStatus.IN_PROGRESS)">
+                  <button mat-flat-button class="action-btn action-primary" (click)="changeStatus(order, ServiceStatus.IN_PROGRESS)">
                     Iniciar
                   </button>
                 }
                 @if (order.status === ServiceStatus.IN_PROGRESS) {
-                  <button mat-button class="action-btn action-primary" (click)="changeStatus(order, ServiceStatus.COMPLETED)">
+                  <button mat-flat-button class="action-btn action-primary" (click)="changeStatus(order, ServiceStatus.COMPLETED)">
                     Completar
                   </button>
                 }
                 @if (order.status === ServiceStatus.COMPLETED) {
-                  <button mat-button class="action-btn action-primary" (click)="changeStatus(order, ServiceStatus.DELIVERED)">
+                  <button mat-flat-button class="action-btn action-primary" (click)="changeStatus(order, ServiceStatus.DELIVERED)">
                     Entregar
                   </button>
                 }
@@ -148,13 +166,32 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
     .cards {
       display: grid;
       gap: 1rem;
+      margin-top: 0;
+      padding-top: 20px;
     }
 
-    .cards mat-card {
-      border-radius: 12px !important;
-      border: 1px solid #e5e7eb !important;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
-      background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+    .service-history-card {
+      border-radius: 16px !important;
+      border: 1px solid #e4ebf5 !important;
+      border-left: 5px solid #d0d9e8 !important;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07) !important;
+      background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%) !important;
+      transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1), border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .service-history-card mat-card-content {
+      padding: 14px 16px 10px !important;
+    }
+
+    .status-card-PENDING { border-left-color: #f59e0b !important; }
+    .status-card-IN_PROGRESS { border-left-color: #2563eb !important; }
+    .status-card-COMPLETED { border-left-color: #16a34a !important; }
+    .status-card-DELIVERED { border-left-color: #64748b !important; }
+
+    .service-history-card:hover {
+      transform: translateY(-2px);
+      border-color: #d7e3f1 !important;
+      box-shadow: 0 16px 28px rgba(15, 23, 42, 0.1) !important;
     }
 
     .card-header {
@@ -162,6 +199,12 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
+      border-bottom: 1px solid #e9eff6;
+      padding-bottom: 10px;
+    }
+
+    .card-heading {
+      min-width: 0;
     }
 
     .order-number {
@@ -170,19 +213,107 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
       color: #111827;
     }
 
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .vehicle-plate {
+      color: #475569;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .meta-dot {
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .service-tag {
+      color: #64748b;
+      font-size: 0.83rem;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #eef4ff;
+      border: 1px solid #dbe6f7;
+    }
+
     .meta {
       color: #6b7280;
       font-size: 0.9rem;
       margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      font-weight: 600;
     }
 
-    .details {
-      margin-top: 0.85rem;
-      display: flex;
-      gap: 1rem;
+    .details-grid {
+      margin-top: 0.9rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
       color: #374151;
-      font-size: 0.92rem;
-      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #e5edf7;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .detail-item mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #748196;
+    }
+
+    .detail-item.price {
+      background: linear-gradient(135deg, #f4fbf5 0%, #ecf9ef 100%);
+      border-color: #d5edd8;
+    }
+
+    .detail-item div {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .detail-label {
+      color: #64748b;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+    }
+
+    .detail-value {
+      color: #1f2937;
+      font-size: 0.95rem;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-item.price .detail-value {
+      color: #166534;
+    }
+
+    .detail-item.price mat-icon {
+      color: #16a34a;
     }
 
     .empty-state-card {
@@ -259,10 +390,10 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
     }
 
     .action-btn {
-      border-radius: 8px;
-      font-weight: 600;
-      padding: 6px 12px !important;
-      min-height: 34px;
+      border-radius: 9px !important;
+      font-weight: 700;
+      padding: 6px 14px !important;
+      min-height: 36px;
       transition: all 160ms ease;
     }
 
@@ -278,21 +409,31 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
     }
 
     .action-primary {
-      color: #0b5394 !important;
-      border: 1px solid #bfdbfe;
-      background: #eef6ff;
+      color: #ffffff !important;
+      border: 1px solid rgba(21, 101, 192, 0.4);
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.24);
     }
 
     .action-primary:hover {
-      border-color: #93c5fd;
-      background: #dbeafe;
-      color: #1d4ed8 !important;
+      background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%);
+      box-shadow: 0 10px 18px rgba(25, 118, 210, 0.32);
+      transform: translateY(-1px);
     }
 
-    .status-PENDING { background-color: #fff3cd; color: #856404; }
-    .status-IN_PROGRESS { background-color: #cfe2ff; color: #084298; }
-    .status-COMPLETED { background-color: #d1e7dd; color: #0f5132; }
-    .status-DELIVERED { background-color: #d3d3d3; color: #383838; }
+    .status-chip {
+      border-radius: 999px !important;
+      border: 1px solid transparent;
+      font-weight: 700;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      font-size: 0.74rem !important;
+    }
+
+    .status-PENDING { background-color: #fef3c7 !important; color: #92400e !important; border-color: #fcd34d; }
+    .status-IN_PROGRESS { background-color: #dbeafe !important; color: #1d4ed8 !important; border-color: #93c5fd; }
+    .status-COMPLETED { background-color: #dcfce7 !important; color: #166534 !important; border-color: #86efac; }
+    .status-DELIVERED { background-color: #e2e8f0 !important; color: #334155 !important; border-color: #cbd5e1; }
 
     @media (max-width: 768px) {
       .page-container {
@@ -311,6 +452,10 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
       .action-btn {
         flex: 1;
         justify-content: center;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
       }
     }
   `]
@@ -354,5 +499,37 @@ export class ServiceListComponent implements OnInit {
       next: () => this.snackBar.open('Estado actualizado', 'Cerrar', { duration: 2500 }),
       error: () => this.snackBar.open('No se pudo actualizar el estado', 'Cerrar', { duration: 2500 })
     });
+  }
+
+  getServiceTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      BASIC: 'Basico',
+      COMPLETE: 'Completo',
+      PREMIUM: 'Premium',
+      EXPRESS: 'Express'
+    };
+    return labels[type] || type;
+  }
+
+  getStatusLabel(status: ServiceStatus): string {
+    const labels: Record<ServiceStatus, string> = {
+      [ServiceStatus.PENDING]: 'Pendiente',
+      [ServiceStatus.IN_PROGRESS]: 'En progreso',
+      [ServiceStatus.COMPLETED]: 'Completado',
+      [ServiceStatus.DELIVERED]: 'Entregado'
+    };
+    return labels[status] || status;
+  }
+
+  formatClientId(clientId: string): string {
+    if (!clientId) {
+      return '-';
+    }
+
+    if (clientId.length <= 16) {
+      return clientId;
+    }
+
+    return `${clientId.slice(0, 8)}...${clientId.slice(-6)}`;
   }
 }

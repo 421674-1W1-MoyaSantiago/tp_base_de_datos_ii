@@ -51,11 +51,11 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
                 </div>
               </div>
               <div class="actions">
-                <button mat-raised-button color="accent" (click)="editClient()">
+                <button mat-flat-button class="btn-edit" (click)="editClient()">
                   <mat-icon>edit</mat-icon>
                   Editar
                 </button>
-                <button mat-raised-button (click)="goBack()">
+                <button mat-flat-button class="btn-back" (click)="goBack()">
                   <mat-icon>arrow_back</mat-icon>
                   Volver
                 </button>
@@ -64,9 +64,9 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
           </mat-card-header>
         </mat-card>
 
-        <mat-card>
+        <mat-card class="content-card">
           <mat-card-content>
-            <mat-tab-group>
+            <mat-tab-group class="client-tabs" animationDuration="200ms">
               <!-- Personal Info Tab -->
               <mat-tab label="Información Personal">
                 <div class="tab-content">
@@ -133,7 +133,7 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
                   <div class="info-section">
                     <div class="section-header">
                       <h2>Vehículos Registrados</h2>
-                      <button mat-raised-button color="primary" (click)="addVehicle()">
+                      <button mat-flat-button class="add-vehicle-btn" (click)="addVehicle()">
                         <mat-icon>add</mat-icon>
                         Agregar Vehículo
                       </button>
@@ -235,7 +235,7 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
                             <th mat-header-cell *matHeaderCellDef>Estado</th>
                             <td mat-cell *matCellDef="let order">
                               <mat-chip-set>
-                                <mat-chip [highlighted]="true" [style.background-color]="getStatusColor(order.status)">
+                                <mat-chip [highlighted]="true" [class]="'status-chip status-' + order.status">
                                   {{ getStatusLabel(order.status) }}
                                 </mat-chip>
                               </mat-chip-set>
@@ -258,20 +258,27 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
                       </div>
 
                       <div class="history-summary">
-                        <mat-card>
+                        <mat-card class="summary-card">
                           <mat-card-content>
-                            <div class="summary-item">
-                              <mat-icon>receipt</mat-icon>
-                              <div>
-                                <span class="summary-label">Total de servicios</span>
-                                <span class="summary-value">{{ serviceHistory().length }}</span>
+                            <div class="stats-grid">
+                              <div class="stat-item">
+                                <div class="stat-icon-wrap">
+                                  <mat-icon>receipt_long</mat-icon>
+                                </div>
+                                <div class="stat-content">
+                                  <span class="summary-label">Total de servicios</span>
+                                  <span class="summary-value">{{ serviceHistory().length }}</span>
+                                </div>
                               </div>
-                            </div>
-                            <div class="summary-item">
-                              <mat-icon>attach_money</mat-icon>
-                              <div>
-                                <span class="summary-label">Total gastado</span>
-                                <span class="summary-value">\${{ calculateTotalSpent() }}</span>
+
+                              <div class="stat-item">
+                                <div class="stat-icon-wrap">
+                                  <mat-icon>payments</mat-icon>
+                                </div>
+                                <div class="stat-content">
+                                  <span class="summary-label">Total gastado</span>
+                                  <span class="summary-value">\${{ calculateTotalSpent() }}</span>
+                                </div>
                               </div>
                             </div>
                           </mat-card-content>
@@ -289,7 +296,7 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
   `,
   styles: [`
     .page-container {
-      padding: 2rem;
+      padding: 24px 16px;
       max-width: 1400px;
       margin: 0 auto;
     }
@@ -303,6 +310,17 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
 
     .header-card {
       margin-bottom: 1.5rem;
+      border-radius: 16px !important;
+      border: 1px solid #e5ebf4 !important;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08) !important;
+      background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%) !important;
+    }
+
+    .content-card {
+      border-radius: 16px !important;
+      border: 1px solid #e5ebf4 !important;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07) !important;
+      background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%) !important;
     }
 
     .header-content {
@@ -319,16 +337,18 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
 
     h1 {
       margin: 0 0 0.5rem 0;
-      font-size: 2rem;
-      font-weight: 500;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #0f172a;
     }
 
     .subtitle {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: rgba(0,0,0,0.6);
-      font-size: 1rem;
+      color: #64748b;
+      font-size: 0.96rem;
+      font-weight: 600;
     }
 
     .subtitle mat-icon {
@@ -339,15 +359,140 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
 
     .actions {
       display: flex;
-      gap: 1rem;
+      gap: 0.7rem;
+    }
+
+    .actions button,
+    .add-vehicle-btn {
+      min-height: 40px;
+      border-radius: 10px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.2px;
+    }
+
+    .btn-edit {
+      border: 1px solid rgba(21, 101, 192, 0.42) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3) !important;
+    }
+
+    .btn-edit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(25, 118, 210, 0.36) !important;
+      background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
+    }
+
+    .btn-edit mat-icon {
+      color: #ffffff !important;
+    }
+
+    .btn-back {
+      border: 1px solid #d2dbe7 !important;
+      background: #ffffff !important;
+      color: #475569 !important;
+    }
+
+    .btn-back:hover {
+      background: #f8fafc !important;
+      border-color: #b8c5d6 !important;
+    }
+
+    .add-vehicle-btn {
+      border: 1px solid rgba(21, 101, 192, 0.4) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3) !important;
+    }
+
+    .add-vehicle-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(25, 118, 210, 0.36) !important;
     }
 
     .tab-content {
-      padding: 2rem 1rem;
+      padding: 0.9rem 0.4rem 0.4rem;
     }
 
     .info-section {
-      margin-bottom: 2rem;
+      margin-bottom: 0;
+      border: 1px solid #e3ebf5;
+      border-radius: 14px;
+      padding: 18px;
+      background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+    }
+
+    ::ng-deep .client-tabs {
+      display: block;
+      border-radius: 14px;
+      --mat-tab-header-divider-color: transparent;
+      border-bottom: 0 !important;
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab-header {
+      border: 1px solid #dce6f3 !important;
+      border-bottom: 0 !important;
+      background: linear-gradient(135deg, #f8fbff 0%, #f1f6fc 100%);
+      border-radius: 12px;
+      padding: 6px;
+      margin-bottom: 14px;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab-label-container,
+    ::ng-deep .client-tabs .mat-mdc-tab-list,
+    ::ng-deep .client-tabs .mat-mdc-tab-list-container,
+    ::ng-deep .client-tabs .mat-mdc-tab-header-pagination,
+    ::ng-deep .client-tabs .mat-mdc-tab-header-pagination-before,
+    ::ng-deep .client-tabs .mat-mdc-tab-header-pagination-after {
+      border-bottom: 0 !important;
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab-header,
+    ::ng-deep .client-tabs .mat-mdc-tab-header-pagination,
+    ::ng-deep .client-tabs .mat-mdc-tab-header-pagination-before,
+    ::ng-deep .client-tabs .mat-mdc-tab-header-pagination-after,
+    ::ng-deep .client-tabs .mat-mdc-tab-header::before,
+    ::ng-deep .client-tabs .mat-mdc-tab-header::after,
+    ::ng-deep .client-tabs .mdc-tab-indicator,
+    ::ng-deep .client-tabs .mdc-tab-indicator__content,
+    ::ng-deep .client-tabs .mat-mdc-tab-body-wrapper,
+    ::ng-deep .client-tabs .mat-mdc-tab-body-content {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab {
+      min-height: 44px;
+      border-radius: 9px;
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab:hover:not(.mdc-tab--active) {
+      background: rgba(25, 118, 210, 0.08);
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab .mdc-tab__text-label {
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.2px;
+      font-size: 0.96rem;
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab.mdc-tab--active {
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3);
+    }
+
+    ::ng-deep .client-tabs .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+      color: #ffffff;
+    }
+
+    ::ng-deep .client-tabs .mdc-tab-indicator__content--underline {
+      display: none;
     }
 
     .section-header {
@@ -359,13 +504,27 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
 
     h2 {
       margin: 0 0 1rem 0;
-      font-size: 1.5rem;
-      font-weight: 500;
-      color: #3f51b5;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      position: relative;
+      padding-left: 12px;
+    }
+
+    h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      height: calc(100% - 8px);
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #1976d2 0%, #1565c0 100%);
     }
 
     mat-divider {
       margin-bottom: 1.5rem;
+      border-color: #e2eaf4;
     }
 
     .info-grid {
@@ -380,12 +539,14 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
       align-items: flex-start;
       gap: 1rem;
       padding: 1rem;
-      background-color: #f5f5f5;
-      border-radius: 8px;
+      background: linear-gradient(135deg, #f8fbff 0%, #f1f7ff 100%);
+      border-radius: 12px;
+      border: 1px solid #e2eaf4;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
     }
 
     .info-item mat-icon {
-      color: #3f51b5;
+      color: #1976d2;
       margin-top: 2px;
     }
 
@@ -398,13 +559,14 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
 
     .label {
       font-size: 0.875rem;
-      color: rgba(0,0,0,0.6);
-      font-weight: 500;
+      color: #64748b;
+      font-weight: 600;
     }
 
     .value {
       font-size: 1rem;
-      color: rgba(0,0,0,0.87);
+      color: #1f2937;
+      font-weight: 600;
     }
 
     .vehicles-grid {
@@ -415,7 +577,16 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
     }
 
     .vehicle-card {
-      background-color: #fafafa;
+      border-radius: 12px !important;
+      border: 1px solid #e2eaf4 !important;
+      background: linear-gradient(140deg, #ffffff 0%, #f8fbff 100%) !important;
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06) !important;
+      transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 24px rgba(15, 23, 42, 0.1) !important;
     }
 
     .vehicle-header {
@@ -427,9 +598,9 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
 
     .vehicle-header h3 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #3f51b5;
+      color: #1e3a8a;
     }
 
     .vehicle-details {
@@ -446,18 +617,22 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
     }
 
     .detail-row .label {
-      font-weight: 500;
-      color: rgba(0,0,0,0.6);
+      font-weight: 600;
+      color: #64748b;
     }
 
     .detail-row .value {
-      color: rgba(0,0,0,0.87);
+      color: #1f2937;
+      font-weight: 600;
     }
 
     .no-data {
       text-align: center;
-      padding: 3rem;
-      color: rgba(0,0,0,0.54);
+      padding: 2.2rem 1.2rem;
+      color: #64748b;
+      border: 1px dashed #cdd9e8;
+      border-radius: 12px;
+      background: linear-gradient(140deg, #f8fbff 0%, #f2f7fc 100%);
     }
 
     .no-data mat-icon {
@@ -465,70 +640,141 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
       width: 64px;
       height: 64px;
       margin-bottom: 1rem;
+      color: #94a3b8;
     }
 
     .no-data p {
       margin: 0;
-      font-size: 1.1rem;
+      font-size: 1.02rem;
+      font-weight: 600;
     }
 
     .table-container {
       overflow-x: auto;
       margin-top: 1.5rem;
+      border: 1px solid #e3ebf5;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
     }
 
     .history-table {
       width: 100%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: none;
+      background: #ffffff;
     }
 
     .history-table th {
-      background-color: #f5f5f5;
+      background: linear-gradient(135deg, #f6f9fd 0%, #eef4fb 100%);
       font-weight: 600;
+      color: #334155;
+    }
+
+    .history-table td {
+      color: #334155;
     }
 
     .history-summary {
       margin-top: 2rem;
     }
 
-    .history-summary mat-card {
-      background-color: #e3f2fd;
+    .summary-card {
+      border-radius: 12px !important;
+      border: 1px solid #dce8f6 !important;
+      background: linear-gradient(140deg, #f7fbff 0%, #edf5ff 100%) !important;
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06) !important;
     }
 
-    .history-summary mat-card-content {
-      display: flex;
-      gap: 3rem;
-      justify-content: center;
-      padding: 1.5rem;
+    .summary-card mat-card-content {
+      padding: 1rem !important;
     }
 
-    .summary-item {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #dbe7f6;
+      background: linear-gradient(145deg, #ffffff 0%, #f4f8ff 100%);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
     }
 
-    .summary-item mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
+    .stat-icon-wrap {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #e8f1ff 0%, #dbeafe 100%);
+      border: 1px solid #c8dcf6;
+      flex-shrink: 0;
+    }
+
+    .stat-icon-wrap mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
       color: #1976d2;
     }
 
-    .summary-item div {
+    .stat-content {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
 
     .summary-label {
       font-size: 0.875rem;
-      color: rgba(0,0,0,0.6);
+      color: #64748b;
+      font-weight: 600;
     }
 
     .summary-value {
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.8rem;
+      font-weight: 700;
       color: #1976d2;
+      line-height: 1.1;
+    }
+
+    .status-chip {
+      border-radius: 999px !important;
+      font-size: 0.74rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.35px;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      min-height: 26px;
+    }
+
+    .status-PENDING {
+      background: #fef3c7 !important;
+      color: #92400e !important;
+      border-color: #fcd34d !important;
+    }
+
+    .status-IN_PROGRESS {
+      background: #dbeafe !important;
+      color: #1d4ed8 !important;
+      border-color: #93c5fd !important;
+    }
+
+    .status-COMPLETED {
+      background: #dcfce7 !important;
+      color: #166534 !important;
+      border-color: #86efac !important;
+    }
+
+    .status-DELIVERED {
+      background: #e2e8f0 !important;
+      color: #334155 !important;
+      border-color: #cbd5e1 !important;
     }
 
     @media (max-width: 768px) {
@@ -557,9 +803,8 @@ import { Client, ServiceOrder, Vehicle } from '../../core/models/models';
         grid-template-columns: 1fr;
       }
 
-      .history-summary mat-card-content {
-        flex-direction: column;
-        gap: 1rem;
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
     }
   `]
@@ -643,16 +888,6 @@ export class ClientDetailComponent implements OnInit {
       'DELIVERED': 'Entregado'
     };
     return labels[status] || status;
-  }
-
-  getStatusColor(status: string): string {
-    const colors: { [key: string]: string } = {
-      'PENDING': '#ff9800',
-      'IN_PROGRESS': '#2196f3',
-      'COMPLETED': '#4caf50',
-      'DELIVERED': '#9c27b0'
-    };
-    return colors[status] || '#757575';
   }
 
   calculateTotalSpent(): string {

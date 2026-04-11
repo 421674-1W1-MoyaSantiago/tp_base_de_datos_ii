@@ -419,7 +419,6 @@ form .mat-mdc-form-field {
   color: var(--gray-900);
 }
 
-/* Ensure placeholder is visible when no value selected */
 .mdc-select__anchor .mat-mdc-select-value {
   color: inherit;
 }
@@ -435,6 +434,47 @@ form .mat-mdc-form-field {
   margin-top: 8px;
   backdrop-filter: blur(10px);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%) !important;
+}
+
+/* Autocomplete panel lives in cdk-overlay; style it globally. */
+.cdk-overlay-container .mat-mdc-autocomplete-panel,
+.cdk-overlay-pane .mat-mdc-autocomplete-panel,
+.mat-mdc-autocomplete-panel.client-autocomplete-panel {
+  background: #ffffff !important;
+  border: 1px solid #dbeafe !important;
+  border-radius: 12px !important;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16) !important;
+  margin-top: 8px !important;
+  padding: 6px !important;
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option,
+.cdk-overlay-pane .mat-mdc-autocomplete-panel .mat-mdc-option,
+.mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option {
+  min-height: 42px !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  color: #1f2937 !important;
+  font-weight: 500;
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option .mdc-list-item__primary-text,
+.cdk-overlay-pane .mat-mdc-autocomplete-panel .mat-mdc-option .mdc-list-item__primary-text,
+.mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option .mdc-list-item__primary-text {
+  color: inherit !important;
+}
+
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option:hover,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mat-mdc-option-active,
+.cdk-overlay-container .mat-mdc-autocomplete-panel .mat-mdc-option.mdc-list-item--selected,
+.cdk-overlay-pane .mat-mdc-autocomplete-panel .mat-mdc-option:hover,
+.cdk-overlay-pane .mat-mdc-autocomplete-panel .mat-mdc-option.mat-mdc-option-active,
+.cdk-overlay-pane .mat-mdc-autocomplete-panel .mat-mdc-option.mdc-list-item--selected,
+.mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option:hover,
+.mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option.mat-mdc-option-active,
+.mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option.mdc-list-item--selected {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
 }
 
 .mat-mdc-option {
@@ -985,6 +1025,54 @@ table {
   }
 }
 
+/* Reusable filter action buttons for list/report toolbars. */
+.filter-actions .filter-btn-primary,
+.filter-actions .filter-btn-ghost {
+  min-height: 42px;
+  border-radius: 10px !important;
+  padding: 0 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+  text-transform: none;
+  transition: all var(--transition-base) !important;
+}
+
+.filter-actions .filter-btn-primary {
+  border: 1px solid rgba(21, 101, 192, 0.38) !important;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(25, 118, 210, 0.26) !important;
+}
+
+.filter-actions .filter-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
+  box-shadow: 0 12px 22px rgba(25, 118, 210, 0.34) !important;
+  transform: translateY(-1px);
+}
+
+.filter-actions .filter-btn-ghost {
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+}
+
+.filter-actions .filter-btn-ghost:hover:not(:disabled) {
+  border-color: #94a3b8 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12) !important;
+  transform: translateY(-1px);
+}
+
+.filter-actions .filter-btn-primary mat-icon,
+.filter-actions .filter-btn-ghost mat-icon {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
 /* ===== FORMULARIOS MEJORADOS ===== */
 .form-section {
   padding: 24px;
@@ -1148,6 +1236,111 @@ table {
     font-weight: 500;
     font-size: 1rem;
   }
+}
+
+/* ===== SNACKBAR MODERNO ===== */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-supporting-text-font: 'Roboto', sans-serif;
+  --mdc-snackbar-container-shape: 12px;
+  --mdc-snackbar-supporting-text-size: 0.92rem;
+  --mdc-snackbar-supporting-text-line-height: 1.35;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  border: 1px solid #dbe6f4;
+  border-left: 4px solid #1976d2;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%) !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14) !important;
+  color: #1f2937 !important;
+  padding-right: 8px;
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-snack-bar-label,
+.mat-mdc-snack-bar-container .mdc-snackbar__label {
+  color: #334155 !important;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions {
+  margin-right: 2px;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions button {
+  --mdc-text-button-label-text-color: #ffffff;
+  --mat-text-button-state-layer-color: rgba(21, 101, 192, 0.14);
+  border-radius: 999px !important;
+  min-width: 84px !important;
+  height: 32px !important;
+  padding: 0 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+  text-transform: none !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(21, 101, 192, 0.45) !important;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.28) !important;
+}
+
+/* Avoid global button pseudo-layer/hover transforms breaking snackbar action text. */
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button::before,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action::before,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions button::before {
+  display: none !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button:hover,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action:hover,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions button:hover {
+  --mdc-text-button-label-text-color: #1565c0;
+  background: linear-gradient(135deg, #ffffff 0%, #f3f8ff 100%) !important;
+  border-color: rgba(21, 101, 192, 0.55) !important;
+  box-shadow: 0 8px 14px rgba(25, 118, 210, 0.2) !important;
+  color: #1565c0 !important;
+  transform: none !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button:focus-visible,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action:focus-visible,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions button:focus-visible {
+  --mdc-text-button-label-text-color: #1565c0;
+  background: linear-gradient(135deg, #ffffff 0%, #f3f8ff 100%) !important;
+  color: #1565c0 !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button .mat-mdc-button-touch-target + .mat-mdc-button-ripple + .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action .mat-mdc-button-touch-target + .mat-mdc-button-ripple + .mdc-button__label {
+  color: inherit !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button:hover .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action:hover .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions button:hover .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-button:focus-visible .mdc-button__label,
+.mat-mdc-snack-bar-container .mdc-snackbar__actions .mat-mdc-snack-bar-action:focus-visible .mdc-button__label {
+  color: #1565c0 !important;
+  opacity: 1 !important;
+}
+
+@keyframes snackbarSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mat-mdc-snack-bar-container {
+  animation: snackbarSlideIn 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ===== SCROLLBAR ===== */

@@ -18,18 +18,16 @@ export const routes: Routes = [
         { path: 'clients/:id/edit', loadComponent: () => import('./features/clients/client-form.component').then(m => m.ClientFormComponent) },
         { path: 'clients/:id', loadComponent: () => import('./features/clients/client-detail.component').then(m => m.ClientDetailComponent) },
         { path: 'employees', loadComponent: () => import('./features/employees/employee-list.component').then(m => m.EmployeeListComponent) },
+        { path: 'employees/new', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
+        { path: 'employees/:id/edit', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
+        { path: 'employees/:id', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
         { path: 'services', loadChildren: () => import('./features/services/services.routes').then(m => m.SERVICE_ROUTES) },
         { path: 'billing', loadComponent: () => import('./features/billing/invoice-list.component').then(m => m.InvoiceListComponent) }
       ]
   },
-  { 
-    path: 'employees',
-    canActivate: [authGuard],
-    children: [
-      { path: 'new', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
-      { path: ':id/edit', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
-      { path: ':id', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) }
-    ]
-  },
+  { path: 'employees', redirectTo: '/dashboard/employees', pathMatch: 'full' },
+  { path: 'employees/new', redirectTo: '/dashboard/employees/new', pathMatch: 'full' },
+  { path: 'employees/:id/edit', redirectTo: '/dashboard/employees/:id/edit', pathMatch: 'full' },
+  { path: 'employees/:id', redirectTo: '/dashboard/employees/:id', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

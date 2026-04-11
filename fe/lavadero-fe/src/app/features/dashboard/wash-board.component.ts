@@ -136,7 +136,7 @@ import { WashCardComponent } from './wash-card.component';
       
       <!-- Kanban Board -->
       <div class="kanban-board" cdkDropListGroup>
-        @for (status of statuses; track status.value) {
+        @for (status of visibleStatuses(); track status.value) {
           <div class="kanban-column">
             <div class="column-header" [style.background-color]="status.color">
               <h3>{{ status.label }}</h3>
@@ -411,8 +411,9 @@ import { WashCardComponent } from './wash-card.component';
     }
 
     .cards-container {
-      padding: 1rem;
+      padding: 0.75rem;
       min-height: 300px;
+      max-height: calc(100vh - 320px);
       flex: 1;
       overflow-y: auto;
     }
@@ -491,6 +492,13 @@ export class WashBoardComponent implements OnInit {
     { value: ServiceStatus.COMPLETED, label: 'Completado', color: '#27ae60' },
     { value: ServiceStatus.DELIVERED, label: 'Entregado', color: '#16a085' }
   ];
+
+  visibleStatuses = computed(() => {
+    if (this.selectedFilterType() === 'status' && this.filterStatus()) {
+      return this.statuses.filter(status => status.value === this.filterStatus());
+    }
+    return this.statuses;
+  });
 
   // Computed values
   uniqueEmployees = computed(() => {

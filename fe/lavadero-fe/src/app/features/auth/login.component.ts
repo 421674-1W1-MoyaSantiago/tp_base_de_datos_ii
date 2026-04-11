@@ -132,11 +132,40 @@ import { MatIconModule } from '@angular/material/icon';
   styles: [`
     .login-wrapper {
       min-height: 100vh;
-      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 193, 7, 0.22) 0%, transparent 40%),
+        radial-gradient(circle at 80% 85%, rgba(0, 172, 193, 0.3) 0%, transparent 42%),
+        linear-gradient(135deg, #082f49 0%, #0f4c75 52%, #0b3a54 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-wrapper::before,
+    .login-wrapper::after {
+      content: '';
+      position: absolute;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(1px);
+      pointer-events: none;
+    }
+
+    .login-wrapper::before {
+      width: 420px;
+      height: 420px;
+      top: -170px;
+      left: -130px;
+    }
+
+    .login-wrapper::after {
+      width: 340px;
+      height: 340px;
+      bottom: -150px;
+      right: -80px;
     }
 
     .login-container {
@@ -144,8 +173,10 @@ import { MatIconModule } from '@angular/material/icon';
       grid-template-columns: 1fr 1fr;
       max-width: 1000px;
       width: 100%;
-      gap: 40px;
+      gap: 48px;
       align-items: center;
+      position: relative;
+      z-index: 1;
     }
 
     .login-brand {
@@ -157,53 +188,64 @@ import { MatIconModule } from '@angular/material/icon';
 
     .brand-content {
       text-align: center;
+      max-width: 420px;
     }
 
     .brand-icon {
-      margin-bottom: 30px;
+      margin-bottom: 26px;
       display: flex;
       justify-content: center;
     }
 
     .icon-large {
-      font-size: 80px !important;
-      width: 80px !important;
-      height: 80px !important;
-      opacity: 0.9;
+      font-size: 84px !important;
+      width: 84px !important;
+      height: 84px !important;
+      opacity: 0.95;
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.35));
     }
 
     .login-brand h1 {
-      font-size: 2.5rem;
+      font-size: 2.75rem;
       font-weight: 700;
-      margin: 0 0 10px 0;
-      letter-spacing: -0.5px;
+      margin: 0 0 12px 0;
+      letter-spacing: -0.6px;
+      line-height: 1.1;
+      text-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
     }
 
     .login-brand p {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       opacity: 0.9;
-      margin-bottom: 40px;
-      font-weight: 300;
+      margin-bottom: 34px;
+      font-weight: 400;
     }
 
     .brand-features {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 14px;
       align-items: flex-start;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 16px 18px;
+      backdrop-filter: blur(8px);
     }
 
     .feature {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
+      color: rgba(255, 255, 255, 0.95);
+    }
 
-      mat-icon {
-        font-size: 20px !important;
-        width: 20px !important;
-        height: 20px !important;
-      }
+    .feature mat-icon {
+      font-size: 20px !important;
+      width: 20px !important;
+      height: 20px !important;
+      color: #ffd166;
     }
 
     .login-form-container {
@@ -213,12 +255,16 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .login-card {
-      background: white;
-      border-radius: 16px;
-      padding: 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(245, 250, 255, 0.95) 100%);
+      border-radius: 22px;
+      padding: 38px;
+      box-shadow:
+        0 24px 70px rgba(3, 24, 41, 0.42),
+        0 6px 18px rgba(9, 53, 79, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       width: 100%;
-      max-width: 400px;
+      max-width: 430px;
+      position: relative;
     }
 
     .login-header {
@@ -227,13 +273,14 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .login-header h2 {
-      font-size: 1.8rem;
-      color: #1976d2;
-      margin-bottom: 8px;
+      font-size: 1.95rem;
+      color: #0f3f5d;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
     }
 
     .login-header p {
-      color: #757575;
+      color: #547087;
       font-size: 0.95rem;
     }
 
@@ -247,13 +294,13 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .alert-error {
-      background-color: #ffebee;
-      color: #c62828;
-      border-left: 4px solid #f44336;
+      background-color: #fff1f2;
+      color: #9f1239;
+      border-left: 4px solid #e11d48;
+    }
 
-      mat-icon {
-        color: #f44336;
-      }
+    .alert-error mat-icon {
+      color: #e11d48;
     }
 
     form {
@@ -264,10 +311,30 @@ import { MatIconModule } from '@angular/material/icon';
 
     .form-field {
       width: 100%;
+    }
 
-      ::ng-deep .mat-mdc-form-field {
-        width: 100%;
-      }
+    .form-field ::ng-deep .mat-mdc-text-field-wrapper {
+      border-radius: 12px;
+      background-color: rgba(244, 249, 253, 0.72);
+    }
+
+    .form-field ::ng-deep .mdc-notched-outline__leading,
+    .form-field ::ng-deep .mdc-notched-outline__notch,
+    .form-field ::ng-deep .mdc-notched-outline__trailing {
+      border-color: rgba(24, 74, 102, 0.24) !important;
+    }
+
+    .form-field ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__leading,
+    .form-field ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__notch,
+    .form-field ::ng-deep .mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+      border-color: rgba(15, 63, 93, 0.45) !important;
+    }
+
+    .form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+    .form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+    .form-field ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+      border-color: #0284c7 !important;
+      border-width: 2px !important;
     }
 
     .visibility-toggle {
@@ -275,32 +342,52 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .login-btn {
-      height: 48px;
+      height: 50px;
       font-size: 1rem;
       font-weight: 600;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.35px;
       display: flex;
       gap: 8px;
       justify-content: center;
       align-items: center;
       margin-top: 12px;
+      border-radius: 12px;
+      background: linear-gradient(120deg, #0ea5a3 0%, #0284c7 52%, #0369a1 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 22px rgba(2, 132, 199, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
 
-      mat-icon {
-        margin-right: 0;
-      }
+    .login-btn:hover:not([disabled]) {
+      transform: translateY(-1px);
+      filter: saturate(1.06);
+      box-shadow: 0 14px 28px rgba(2, 132, 199, 0.45);
+    }
+
+    .login-btn:active:not([disabled]) {
+      transform: translateY(0);
+    }
+
+    .login-btn mat-icon {
+      margin-right: 0;
+    }
+
+    .login-btn[disabled] {
+      opacity: 0.74;
+      box-shadow: none;
     }
 
     .login-footer {
       text-align: center;
       margin-top: 24px;
-      color: #9e9e9e;
+      color: #6d879a;
       font-size: 0.875rem;
     }
 
     @media (max-width: 768px) {
       .login-container {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 20px;
       }
 
       .login-brand {
@@ -308,7 +395,8 @@ import { MatIconModule } from '@angular/material/icon';
       }
 
       .login-card {
-        padding: 30px;
+        padding: 28px 24px;
+        max-width: 100%;
       }
 
       .login-brand h1 {

@@ -37,43 +37,43 @@ import { Employee, EmployeeRole } from '../../core/models/models';
 
       <mat-card>
         <mat-card-content>
-          <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+          <form class="employee-form" [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
             <div class="form-grid">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Nombre</mat-label>
-                <input matInput formControlName="firstName" required>
+                <input matInput formControlName="firstName" placeholder="Ej: Juan" required>
                 @if (employeeForm.get('firstName')?.hasError('required') && 
                      employeeForm.get('firstName')?.touched) {
                   <mat-error>El nombre es requerido</mat-error>
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Apellido</mat-label>
-                <input matInput formControlName="lastName" required>
+                <input matInput formControlName="lastName" placeholder="Ej: Pérez" required>
                 @if (employeeForm.get('lastName')?.hasError('required') && 
                      employeeForm.get('lastName')?.touched) {
                   <mat-error>El apellido es requerido</mat-error>
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Email</mat-label>
-                <input matInput type="email" formControlName="email">
+                <input matInput type="email" formControlName="email" placeholder="correo@empresa.com">
                 @if (employeeForm.get('email')?.hasError('email') && 
                      employeeForm.get('email')?.touched) {
                   <mat-error>Email inválido</mat-error>
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Teléfono</mat-label>
-                <input matInput formControlName="phone">
+                <input matInput formControlName="phone" placeholder="+595 981 000000">
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Nombre de Usuario</mat-label>
-                <input matInput formControlName="username" required>
+                <input matInput formControlName="username" placeholder="usuario.empleado" required>
                 @if (employeeForm.get('username')?.hasError('required') && 
                      employeeForm.get('username')?.touched) {
                   <mat-error>El nombre de usuario es requerido</mat-error>
@@ -84,8 +84,9 @@ import { Employee, EmployeeRole } from '../../core/models/models';
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Rol</mat-label>
+                <mat-hint>Seleccioná un perfil para definir permisos</mat-hint>
                 <mat-select formControlName="role" required>
                   <mat-option [value]="EmployeeRole.OPERATOR">Operador</mat-option>
                   <mat-option [value]="EmployeeRole.ADMIN">Administrador</mat-option>
@@ -98,11 +99,12 @@ import { Employee, EmployeeRole } from '../../core/models/models';
               </mat-form-field>
 
               @if (!isEditMode()) {
-                <mat-form-field appearance="outline" class="full-width">
+                <mat-form-field appearance="outline" floatLabel="always" class="full-width">
                   <mat-label>Contraseña</mat-label>
                   <input matInput 
                          [type]="hidePassword() ? 'password' : 'text'" 
-                         formControlName="password" 
+                         formControlName="password"
+                         placeholder="Mínimo 6 caracteres"
                          required>
                   <button mat-icon-button 
                           matSuffix 
@@ -123,11 +125,11 @@ import { Employee, EmployeeRole } from '../../core/models/models';
             </div>
 
             <div class="form-actions">
-              <button mat-button type="button" (click)="goBack()">
+              <button mat-flat-button type="button" class="cancel-btn" (click)="goBack()">
                 Cancelar
               </button>
-              <button mat-raised-button 
-                      color="primary" 
+              <button mat-flat-button
+                      class="save-btn"
                       type="submit"
                       [disabled]="employeeForm.invalid || loading()">
                 @if (loading()) {
@@ -150,10 +152,10 @@ import { Employee, EmployeeRole } from '../../core/models/models';
     }
 
     mat-card {
-      border-radius: 12px !important;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-      border: 1px solid #f0f0f0 !important;
-      background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+      border-radius: 18px !important;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08), 0 8px 16px rgba(15, 23, 42, 0.05) !important;
+      border: 1px solid #e8edf3 !important;
+      background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%) !important;
     }
 
     .header {
@@ -189,9 +191,9 @@ import { Employee, EmployeeRole } from '../../core/models/models';
       gap: 16px;
       margin-bottom: 24px;
       padding: 24px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
-      border: 1px solid #f0f0f0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #f7faff 0%, #ffffff 58%, #f9fbff 100%);
+      border: 1px solid #e7edf7;
     }
 
     .full-width {
@@ -201,19 +203,33 @@ import { Employee, EmployeeRole } from '../../core/models/models';
     mat-form-field {
       width: 100%;
 
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        min-height: 20px;
+      }
+
+      ::ng-deep .mat-mdc-form-field-hint {
+        color: #607d8b;
+        font-size: 0.78rem;
+      }
+
+      ::ng-deep .mat-mdc-input-element::placeholder {
+        color: #90a4ae !important;
+        opacity: 0.95 !important;
+      }
+
       .mat-mdc-text-field-wrapper {
-        border-color: #d1d5db !important;
+        border-color: #d8e0eb !important;
         transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
         &:hover {
-          border-color: #bdbdbd !important;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+          border-color: #b2c2d6 !important;
+          box-shadow: 0 2px 8px rgba(40, 63, 90, 0.08) !important;
         }
       }
 
       &.mat-focused .mat-mdc-text-field-wrapper {
         border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12) !important;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.14), 0 4px 12px rgba(25, 118, 210, 0.14) !important;
       }
     }
 
@@ -228,22 +244,42 @@ import { Employee, EmployeeRole } from '../../core/models/models';
 
       button {
         min-width: 130px;
-        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-
-        &[color="primary"] {
-          box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
-
-          &:hover:not(:disabled) {
-            box-shadow: 0 8px 16px rgba(25, 118, 210, 0.3);
-            transform: translateY(-2px);
-          }
-        }
+        border-radius: 10px !important;
+        min-height: 40px;
+        transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
 
         &:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
       }
+    }
+
+    .cancel-btn {
+      border: 1px solid #d2dbe7 !important;
+      background: #ffffff !important;
+      color: #475569 !important;
+      font-weight: 700 !important;
+    }
+
+    .cancel-btn:hover {
+      background: #f8fafc !important;
+      border-color: #b8c5d6 !important;
+      transform: translateY(-1px);
+    }
+
+    .save-btn {
+      border: 1px solid rgba(21, 101, 192, 0.4) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3) !important;
+    }
+
+    .save-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(25, 118, 210, 0.36) !important;
+      background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
     }
 
     @media (max-width: 768px) {
@@ -372,6 +408,6 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/employees']);
+    this.router.navigate(['/dashboard/employees']);
   }
 }

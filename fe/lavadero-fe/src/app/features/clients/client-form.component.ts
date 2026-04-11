@@ -103,9 +103,9 @@ import { Client, Vehicle } from '../../core/models/models';
               <div class="section">
                 <div class="section-header">
                   <h2>Vehículos</h2>
-                  <button mat-raised-button 
-                          type="button" 
-                          color="accent" 
+                    <button mat-flat-button
+                      type="button"
+                      class="add-vehicle-btn"
                           (click)="addVehicle()">
                     <mat-icon>add</mat-icon>
                     Agregar Vehículo
@@ -182,12 +182,12 @@ import { Client, Vehicle } from '../../core/models/models';
 
               <!-- Action Buttons -->
               <div class="form-actions">
-                <button mat-raised-button type="button" (click)="onCancel()">
+                <button mat-raised-button type="button" class="cancel-btn" (click)="onCancel()">
                   <mat-icon>cancel</mat-icon>
                   Cancelar
                 </button>
-                <button mat-raised-button 
-                        color="primary" 
+                <button mat-raised-button
+                        class="save-btn"
                         type="submit"
                         [disabled]="clientForm.invalid || saving()">
                   @if (saving()) {
@@ -287,6 +287,31 @@ import { Client, Vehicle } from '../../core/models/models';
       }
     }
 
+    .add-vehicle-btn {
+      min-height: 42px;
+      border-radius: 10px !important;
+      padding: 0 16px !important;
+      border: 1px solid rgba(21, 101, 192, 0.4) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.2px;
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3) !important;
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex !important;
+      align-items: center;
+    }
+
+    .add-vehicle-btn mat-icon {
+      color: #ffffff !important;
+    }
+
+    .add-vehicle-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(25, 118, 210, 0.36) !important;
+      background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
+    }
+
     .form-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -368,22 +393,54 @@ import { Client, Vehicle } from '../../core/models/models';
 
       button {
         min-width: 140px;
-        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-
-        &[color="primary"] {
-          box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
-
-          &:hover:not(:disabled) {
-            box-shadow: 0 8px 16px rgba(25, 118, 210, 0.3);
-            transform: translateY(-2px);
-          }
-        }
+        border-radius: 10px !important;
+        min-height: 40px;
+        transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
 
         &:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
       }
+    }
+
+    .cancel-btn {
+      border: 1px solid #d2dbe7 !important;
+      background: #ffffff !important;
+      color: #475569 !important;
+      font-weight: 700 !important;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07) !important;
+    }
+
+    .cancel-btn:hover {
+      background: #f8fafc !important;
+      border-color: #b8c5d6 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12) !important;
+    }
+
+    .cancel-btn mat-icon {
+      color: #64748b !important;
+    }
+
+    .save-btn {
+      border: 1px solid rgba(21, 101, 192, 0.4) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.3) !important;
+      display: inline-flex !important;
+      align-items: center;
+    }
+
+    .save-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(25, 118, 210, 0.36) !important;
+      background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
+    }
+
+    .save-btn mat-icon {
+      color: #ffffff !important;
     }
 
     button[type="submit"] mat-spinner {

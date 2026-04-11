@@ -11,7 +11,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EmployeeService } from '../../core/services/employee.service';
 import { Employee, EmployeeRole } from '../../core/models/models';
@@ -31,14 +30,13 @@ import { Employee, EmployeeRole } from '../../core/models/models';
     MatSnackBarModule,
     MatDialogModule,
     MatCardModule,
-    MatSlideToggleModule,
     MatTooltipModule
   ],
   template: `
     <div class="page-container">
       <div class="header">
         <h1>Gestión de Empleados</h1>
-        <button mat-raised-button color="primary" (click)="createEmployee()">
+        <button mat-raised-button color="primary" class="new-employee-btn" (click)="createEmployee()">
           <mat-icon>add</mat-icon>
           Nuevo Empleado
         </button>
@@ -111,23 +109,26 @@ import { Employee, EmployeeRole } from '../../core/models/models';
                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                 <td mat-cell *matCellDef="let employee">
                   <div class="actions">
-                    <button mat-icon-button color="primary" 
+                    <button mat-icon-button class="action-icon-btn action-view"
                             (click)="viewEmployee(employee)"
                             matTooltip="Ver detalles">
                       <mat-icon>visibility</mat-icon>
                     </button>
-                    <button mat-icon-button color="accent" 
+                    <button mat-icon-button class="action-icon-btn action-edit"
                             (click)="editEmployee(employee)"
                             matTooltip="Editar">
                       <mat-icon>edit</mat-icon>
                     </button>
-                    <mat-slide-toggle 
-                      [checked]="employee.active"
-                      (change)="toggleStatus(employee)"
-                      [matTooltip]="employee.active ? 'Desactivar' : 'Activar'"
-                      color="primary">
-                    </mat-slide-toggle>
-                    <button mat-icon-button color="warn" 
+                    <button mat-stroked-button
+                            class="action-toggle"
+                            [class.active]="employee.active"
+                            [class.inactive]="!employee.active"
+                            (click)="toggleStatus(employee)"
+                            [matTooltip]="employee.active ? 'Desactivar' : 'Activar'">
+                      <mat-icon>{{ employee.active ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                      {{ employee.active ? 'Activo' : 'Inactivo' }}
+                    </button>
+                    <button mat-icon-button class="action-icon-btn action-delete"
                             (click)="deleteEmployee(employee)"
                             matTooltip="Eliminar">
                       <mat-icon>delete</mat-icon>
@@ -185,6 +186,44 @@ import { Employee, EmployeeRole } from '../../core/models/models';
       font-weight: 700;
       color: #212121;
       letter-spacing: -0.5px;
+    }
+
+    .new-employee-btn {
+      min-height: 46px;
+      padding: 0 20px !important;
+      border-radius: 10px !important;
+      border: 1px solid rgba(21, 101, 192, 0.35) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 14px rgba(25, 118, 210, 0.28) !important;
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+      mat-icon {
+        color: #ffffff !important;
+        margin-right: 8px !important;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
+        border-color: rgba(21, 101, 192, 0.55) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(25, 118, 210, 0.35) !important;
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba(25, 118, 210, 0.25) !important;
+      }
+
+      &:focus-visible {
+        outline: 3px solid rgba(25, 118, 210, 0.25);
+        outline-offset: 2px;
+      }
     }
 
     .filters {
@@ -285,7 +324,103 @@ import { Employee, EmployeeRole } from '../../core/models/models';
       display: flex;
       gap: 8px;
       align-items: center;
+      justify-content: center;
       flex-wrap: wrap;
+      width: 100%;
+    }
+
+    table ::ng-deep {
+      .mat-column-actions {
+        text-align: center;
+      }
+    }
+
+    .action-icon-btn {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      border-radius: 10px !important;
+      border: 1px solid transparent !important;
+      transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      line-height: 1 !important;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        margin: 0 !important;
+        display: block;
+        line-height: 18px !important;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+
+    .action-view {
+      color: #1d4ed8 !important;
+      background: #eff6ff !important;
+      border-color: #bfdbfe !important;
+
+      &:hover {
+        background: #dbeafe !important;
+        border-color: #93c5fd !important;
+      }
+    }
+
+    .action-edit {
+      color: #0f766e !important;
+      background: #ecfeff !important;
+      border-color: #99f6e4 !important;
+
+      &:hover {
+        background: #ccfbf1 !important;
+        border-color: #5eead4 !important;
+      }
+    }
+
+    .action-delete {
+      color: #b91c1c !important;
+      background: #fef2f2 !important;
+      border-color: #fecaca !important;
+
+      &:hover {
+        background: #fee2e2 !important;
+        border-color: #fca5a5 !important;
+      }
+    }
+
+    .action-toggle {
+      min-height: 34px;
+      border-radius: 9px !important;
+      padding: 0 10px !important;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border-width: 1px !important;
+
+      mat-icon {
+        margin-right: 4px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .action-toggle.active {
+      background: #ecfdf3 !important;
+      color: #166534 !important;
+      border-color: #86efac !important;
+    }
+
+    .action-toggle.inactive {
+      background: #fff7ed !important;
+      color: #9a3412 !important;
+      border-color: #fdba74 !important;
     }
 
     .loading, .no-data {
@@ -331,8 +466,9 @@ import { Employee, EmployeeRole } from '../../core/models/models';
         align-items: stretch;
       }
 
-      button[mat-raised-button] {
+      .new-employee-btn {
         width: 100%;
+        justify-content: center;
       }
 
       table ::ng-deep {
@@ -417,15 +553,15 @@ export class EmployeeListComponent implements OnInit {
   }
 
   createEmployee() {
-    this.router.navigate(['/employees/new']);
+    this.router.navigate(['/dashboard/employees/new']);
   }
 
   viewEmployee(employee: Employee) {
-    this.router.navigate(['/employees', employee.id]);
+    this.router.navigate(['/dashboard/employees', employee.id]);
   }
 
   editEmployee(employee: Employee) {
-    this.router.navigate(['/employees', employee.id, 'edit']);
+    this.router.navigate(['/dashboard/employees', employee.id, 'edit']);
   }
 
   toggleStatus(employee: Employee) {

@@ -114,24 +114,26 @@ import { debounceTime, Subject } from 'rxjs';
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef>Acciones</th>
                   <td mat-cell *matCellDef="let client">
-                    <button mat-icon-button 
-                            color="primary" 
-                            (click)="viewClient(client.id)"
-                            matTooltip="Ver detalles">
-                      <mat-icon>visibility</mat-icon>
-                    </button>
-                    <button mat-icon-button 
-                            color="accent" 
-                            (click)="editClient(client.id)"
-                            matTooltip="Editar">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button 
-                            color="warn" 
-                            (click)="deleteClient(client)"
-                            matTooltip="Eliminar">
-                      <mat-icon>delete</mat-icon>
-                    </button>
+                    <div class="actions">
+                      <button mat-icon-button
+                              class="action-icon-btn action-view"
+                              (click)="viewClient(client.id)"
+                              matTooltip="Ver detalles">
+                        <mat-icon>visibility</mat-icon>
+                      </button>
+                      <button mat-icon-button
+                              class="action-icon-btn action-edit"
+                              (click)="editClient(client.id)"
+                              matTooltip="Editar">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button
+                              class="action-icon-btn action-delete"
+                              (click)="deleteClient(client)"
+                              matTooltip="Eliminar">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
                   </td>
                 </ng-container>
 
@@ -356,6 +358,79 @@ import { debounceTime, Subject } from 'rxjs';
       letter-spacing: 0.5px;
     }
 
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .clients-table ::ng-deep .mat-column-actions {
+      text-align: center;
+    }
+
+    .action-icon-btn {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      border-radius: 10px !important;
+      border: 1px solid transparent !important;
+      transition: all 160ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      line-height: 1 !important;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        margin: 0 !important;
+        display: block;
+        line-height: 18px !important;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+
+    .action-view {
+      color: #1d4ed8 !important;
+      background: #eff6ff !important;
+      border-color: #bfdbfe !important;
+
+      &:hover {
+        background: #dbeafe !important;
+        border-color: #93c5fd !important;
+      }
+    }
+
+    .action-edit {
+      color: #0f766e !important;
+      background: #ecfeff !important;
+      border-color: #99f6e4 !important;
+
+      &:hover {
+        background: #ccfbf1 !important;
+        border-color: #5eead4 !important;
+      }
+    }
+
+    .action-delete {
+      color: #b91c1c !important;
+      background: #fef2f2 !important;
+      border-color: #fecaca !important;
+
+      &:hover {
+        background: #fee2e2 !important;
+        border-color: #fca5a5 !important;
+      }
+    }
+
     .no-data {
       text-align: center;
       padding: 60px 20px;
@@ -414,6 +489,10 @@ import { debounceTime, Subject } from 'rxjs';
           padding: 12px 8px !important;
           font-size: 0.9rem !important;
         }
+      }
+
+      .actions {
+        gap: 6px;
       }
     }
   `]

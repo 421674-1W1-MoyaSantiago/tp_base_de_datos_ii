@@ -49,7 +49,7 @@ import { EmployeeSelectorComponent } from '../../shared/components/employee-sele
           <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" class="service-order-form">
             
             <!-- Client Autocomplete -->
-            <mat-form-field appearance="outline" floatLabel="always">
+            <mat-form-field class="client-search-field" appearance="outline" floatLabel="always">
               <mat-label>Cliente</mat-label>
               <input
                 type="text"
@@ -59,7 +59,10 @@ import { EmployeeSelectorComponent } from '../../shared/components/employee-sele
                 placeholder="Buscar cliente por nombre o DNI">
               <mat-icon matPrefix>person_search</mat-icon>
               <mat-hint>Escriba nombre, DNI o email</mat-hint>
-              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onClientSelected($event.option.value)">
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                class="client-autocomplete-panel"
+                (optionSelected)="onClientSelected($event.option.value)">
                 @for (client of filteredClients(); track client.id) {
                   <mat-option [value]="client">
                     {{client.firstName}} {{client.lastName}} - {{client.dni}}
@@ -222,6 +225,50 @@ import { EmployeeSelectorComponent } from '../../shared/components/employee-sele
       margin-right: 8px;
       color: #1976d2;
       opacity: 0.95;
+    }
+
+    .client-search-field ::ng-deep .mat-mdc-text-field-wrapper {
+      border: 1.5px solid #bfdbfe !important;
+      background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%) !important;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1) !important;
+    }
+
+    .client-search-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      margin-top: 6px;
+    }
+
+    .client-search-field ::ng-deep .mat-mdc-form-field-hint {
+      color: #475569 !important;
+      font-weight: 500;
+    }
+
+    .client-search-field ::ng-deep .mat-mdc-input-element::placeholder {
+      color: #64748b !important;
+      opacity: 1 !important;
+    }
+
+    :host ::ng-deep .mat-mdc-autocomplete-panel.client-autocomplete-panel {
+      background: #ffffff !important;
+      border: 1px solid #dbeafe !important;
+      border-radius: 12px !important;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14) !important;
+      margin-top: 8px;
+      padding: 6px;
+    }
+
+    :host ::ng-deep .mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option {
+      border-radius: 8px;
+      min-height: 42px !important;
+      padding: 10px 12px !important;
+      color: #1f2937 !important;
+      font-weight: 500;
+    }
+
+    :host ::ng-deep .mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option:hover,
+    :host ::ng-deep .mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option.mdc-list-item--selected,
+    :host ::ng-deep .mat-mdc-autocomplete-panel.client-autocomplete-panel .mat-mdc-option.mat-mdc-option-active {
+      background: #eff6ff !important;
+      color: #1d4ed8 !important;
     }
 
     .service-order-form ::ng-deep .mat-mdc-text-field-wrapper {

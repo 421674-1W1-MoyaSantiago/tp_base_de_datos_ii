@@ -72,10 +72,21 @@ interface InvoiceDisplay extends Invoice {
             </mat-form-field>
 
             <div class="filter-actions">
-              <button mat-raised-button color="primary" (click)="applyFilters()">
+              <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                class="filter-btn-primary"
+                (click)="applyFilters()">
+                <mat-icon>filter_alt</mat-icon>
                 Filtrar
               </button>
-              <button mat-button (click)="clearFilters()">
+              <button
+                mat-stroked-button
+                type="button"
+                class="filter-btn-ghost"
+                (click)="clearFilters()">
+                <mat-icon>clear_all</mat-icon>
                 Limpiar
               </button>
             </div>
@@ -196,9 +207,56 @@ interface InvoiceDisplay extends Invoice {
 
     .filter-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
       padding-top: 8px;
+    }
+
+    .filter-btn-primary,
+    .filter-btn-ghost {
+      min-height: 42px;
+      border-radius: 10px !important;
+      padding: 0 16px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.2px;
+      text-transform: none;
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .filter-btn-primary {
+      border: 1px solid rgba(21, 101, 192, 0.38) !important;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(25, 118, 210, 0.26) !important;
+    }
+
+    .filter-btn-primary:hover {
+      background: linear-gradient(135deg, #1e88e5 0%, #1976d2 100%) !important;
+      box-shadow: 0 12px 22px rgba(25, 118, 210, 0.34) !important;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn-ghost {
+      border: 1px solid #cbd5e1 !important;
+      background: #ffffff !important;
+      color: #475569 !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+    }
+
+    .filter-btn-ghost:hover {
+      border-color: #94a3b8 !important;
+      color: #0f172a !important;
+      background: #f8fafc !important;
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12) !important;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn-primary mat-icon,
+    .filter-btn-ghost mat-icon {
+      margin-right: 6px;
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
     }
 
     .loading-container {
