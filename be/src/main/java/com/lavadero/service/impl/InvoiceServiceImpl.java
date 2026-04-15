@@ -54,6 +54,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setNotes(request.notes());
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
+        
+        // Mark the service order as invoiced
+        serviceOrder.setInvoiced(true);
+        serviceOrderRepository.save(serviceOrder);
+        
         return mapToResponse(savedInvoice);
     }
 

@@ -68,12 +68,16 @@ import { Employee, EmployeeRole } from '../../core/models/models';
 
               <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Teléfono</mat-label>
-                <input matInput formControlName="phone" placeholder="+595 981 000000">
+                <input matInput formControlName="phone" placeholder="Ej: 123456789">
+                @if (employeeForm.get('phone')?.hasError('pattern') && 
+                     employeeForm.get('phone')?.touched) {
+                  <mat-error>Solo se permiten números</mat-error>
+                }
               </mat-form-field>
 
               <mat-form-field appearance="outline" floatLabel="always">
                 <mat-label>Nombre de Usuario</mat-label>
-                <input matInput formControlName="username" placeholder="usuario.empleado" required>
+                <input matInput formControlName="username" placeholder="Nombre de usuario" required>
                 @if (employeeForm.get('username')?.hasError('required') && 
                      employeeForm.get('username')?.touched) {
                   <mat-error>El nombre de usuario es requerido</mat-error>
@@ -332,7 +336,7 @@ export class EmployeeFormComponent implements OnInit {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.email]],
-      phone: [''],
+      phone: ['', [Validators.pattern('^[0-9]*$')]],
       username: ['', [Validators.required, Validators.minLength(3)]],
       role: ['', [Validators.required]],
       password: ['']

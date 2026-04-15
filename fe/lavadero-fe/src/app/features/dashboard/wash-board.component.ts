@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -10,7 +10,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { WashService } from '../../core/services/wash.service';
+import { InvoiceService } from '../../core/services/invoice.service';
+import { InvoiceModalComponent } from '../../shared/components/invoice-modal.component';
 import { ServiceOrder, ServiceStatus, ServiceType } from '../../core/models/models';
 import { WashCardComponent } from './wash-card.component';
 
@@ -29,6 +32,7 @@ import { WashCardComponent } from './wash-card.component';
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
+    MatDialogModule,
     WashCardComponent
   ],
   template: `
@@ -75,7 +79,7 @@ import { WashCardComponent } from './wash-card.component';
           @if (selectedFilterType() === 'status') {
             <mat-form-field appearance="outline" class="filter-field" floatLabel="always">
               <mat-label>Estado</mat-label>
-              <mat-select [(ngModel)]="filterStatus" placeholder="Seleccione un estado">
+              <mat-select [ngModel]="filterStatus()" (ngModelChange)="filterStatus.set($event)" placeholder="Seleccione un estado">
                 <mat-option [value]="null">Todos</mat-option>
                 @for (status of statuses; track status.value) {
                   <mat-option [value]="status.value">{{ status.label }}</mat-option>
@@ -88,7 +92,7 @@ import { WashCardComponent } from './wash-card.component';
           @if (selectedFilterType() === 'employee') {
             <mat-form-field appearance="outline" class="filter-field" floatLabel="always">
               <mat-label>Empleado</mat-label>
-              <mat-select [(ngModel)]="filterEmployee" placeholder="Seleccione un empleado">
+              <mat-select [ngModel]="filterEmployee()" (ngModelChange)="filterEmployee.set($event)" placeholder="Seleccione un empleado">
                 <mat-option [value]="null">Todos</mat-option>
                 @for (empId of uniqueEmployees(); track empId) {
                   <mat-option [value]="empId">{{ empId }}</mat-option>
@@ -101,7 +105,7 @@ import { WashCardComponent } from './wash-card.component';
           @if (selectedFilterType() === 'service') {
             <mat-form-field appearance="outline" class="filter-field" floatLabel="always">
               <mat-label>Tipo de Servicio</mat-label>
-              <mat-select [(ngModel)]="filterServiceType" placeholder="Seleccione un servicio">
+              <mat-select [ngModel]="filterServiceType()" (ngModelChange)="filterServiceType.set($event)" placeholder="Seleccione un servicio">
                 <mat-option [value]="null">Todos</mat-option>
                 <mat-option value="BASIC">Básico</mat-option>
                 <mat-option value="COMPLETE">Completo</mat-option>
@@ -116,7 +120,7 @@ import { WashCardComponent } from './wash-card.component';
             <mat-form-field appearance="outline" class="filter-field" floatLabel="always">
               <mat-label>Fecha Desde</mat-label>
               <mat-icon matPrefix>calendar_today</mat-icon>
-              <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="filterDateFrom" placeholder="dd/mm/yyyy">
+              <input matInput [matDatepicker]="pickerFrom" [ngModel]="filterDateFrom()" (ngModelChange)="filterDateFrom.set($event)" placeholder="dd/mm/yyyy">
               <mat-hint>Formato: dd/mm/yyyy</mat-hint>
               <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
               <mat-datepicker #pickerFrom></mat-datepicker>
@@ -125,7 +129,7 @@ import { WashCardComponent } from './wash-card.component';
             <mat-form-field appearance="outline" class="filter-field" floatLabel="always">
               <mat-label>Fecha Hasta</mat-label>
               <mat-icon matPrefix>calendar_today</mat-icon>
-              <input matInput [matDatepicker]="pickerTo" [(ngModel)]="filterDateTo" placeholder="dd/mm/yyyy">
+              <input matInput [matDatepicker]="pickerTo" [ngModel]="filterDateTo()" (ngModelChange)="filterDateTo.set($event)" placeholder="dd/mm/yyyy">
               <mat-hint>Formato: dd/mm/yyyy</mat-hint>
               <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
               <mat-datepicker #pickerTo></mat-datepicker>
@@ -181,7 +185,6 @@ import { WashCardComponent } from './wash-card.component';
       font-weight: 600;
     }
     
-    /* Filters Section */
     .filters-section {
       background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
       padding: 1.5rem;
@@ -248,24 +251,6 @@ import { WashCardComponent } from './wash-card.component';
       font-weight: 600;
     }
 
-    .filter-type-btn.active:hover {
-      background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
-      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
-    }
-
-    .filter-type-btn mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-      color: inherit;
-      margin: 0;
-      padding: 0;
-    }
-
-    .filter-type-btn span {
-      color: inherit;
-    }
-
     .filter-controls {
       display: flex;
       gap: 1rem;
@@ -283,95 +268,7 @@ import { WashCardComponent } from './wash-card.component';
     .filter-field {
       width: 100%;
     }
-    
-    .filter-controls mat-select {
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-    
-    .filter-controls input {
-      font-weight: 500;
-    }
-    
-    /* Enhanced filter field styling */
-    .filter-field .mat-mdc-text-field-wrapper {
-      border: 1px solid #f0f0f0;
-      background: linear-gradient(135deg, #ffffff 0%, #fcfdfe 100%);
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    }
-    
-    .filter-field .mat-mdc-text-field-wrapper:hover {
-      border-color: #e5e7eb;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.02);
-      background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
-    }
-    
-    .filter-field.mat-focused .mat-mdc-text-field-wrapper {
-      border-color: var(--primary, #1976d2);
-      border-width: 1px;
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12), 0 6px 20px rgba(25, 118, 210, 0.25);
-      background: linear-gradient(135deg, #f0f7ff 0%, #f8fafc 100%);
-    }
-    
-    .filter-field mat-label {
-      color: #4b5563 !important;
-      font-weight: 600;
-      font-size: 0.9rem !important;
-      letter-spacing: 0.4px;
-    }
-    
-    .filter-field mat-icon {
-      color: var(--primary, #1976d2) !important;
-    }
 
-    /* Styling for select placeholders in filters */
-    .filter-field mat-select {
-      color: var(--gray-900);
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
-
-    /* Show placeholder text when select is empty */
-    .filter-field .mdc-select__anchor::before {
-      content: attr(data-placeholder);
-      color: var(--gray-500);
-      font-weight: 400;
-    }
-
-    .filter-field .mat-mdc-select-value {
-      color: var(--gray-900);
-      font-weight: 500;
-    }
-
-    /* Placeholder styling when no value is selected */
-    .filter-field .mat-mdc-select-value-text:empty {
-      color: var(--gray-500);
-      font-weight: 400;
-      opacity: 0.8;
-    }
-
-    /* Hint text styling in filters */
-    .filter-field .mat-mdc-form-field-hint {
-      color: var(--gray-500);
-      font-size: 0.8rem;
-      font-weight: 400;
-    }
-
-    /* Date input styling in filters */
-    .filter-field input[matInput]::placeholder {
-      color: var(--gray-500) !important;
-      opacity: 1 !important;
-      font-weight: 400;
-    }
-
-    /* Ensure placeholder visibility for date inputs */
-    .filter-field .mat-mdc-input-element::placeholder {
-      color: var(--gray-500) !important;
-      opacity: 1 !important;
-    }
-
-    /* Kanban Board */
     .kanban-board {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -418,21 +315,6 @@ import { WashCardComponent } from './wash-card.component';
       overflow-y: auto;
     }
     
-    /* Drag & Drop Styles */
-    .cdk-drag-preview {
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      border-radius: 8px;
-      opacity: 0.9;
-    }
-    
-    .cdk-drag-animating {
-      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-    }
-    
-    .cards-container.cdk-drop-list-dragging .cdk-drag {
-      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-    }
-    
     .drag-placeholder {
       background: #e3f2fd;
       border: 2px dashed #2196f3;
@@ -448,7 +330,6 @@ import { WashCardComponent } from './wash-card.component';
       font-style: italic;
     }
     
-    /* Responsive */
     @media (max-width: 1400px) {
       .kanban-board {
         grid-template-columns: repeat(2, 1fr);
@@ -464,17 +345,14 @@ import { WashCardComponent } from './wash-card.component';
         flex-direction: column;
         align-items: stretch;
       }
-      
-      .filter-controls mat-form-field,
-      .clear-btn {
-        width: 100%;
-      }
     }
   `]
 })
 export class WashBoardComponent implements OnInit {
   private washService = inject(WashService);
+  private invoiceService = inject(InvoiceService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   serviceOrders = this.washService.serviceOrders;
 
@@ -500,7 +378,6 @@ export class WashBoardComponent implements OnInit {
     return this.statuses;
   });
 
-  // Computed values
   uniqueEmployees = computed(() => {
     const employees = this.serviceOrders()
       .map(order => order.assignedEmployeeId)
@@ -511,22 +388,18 @@ export class WashBoardComponent implements OnInit {
   filteredOrders = computed(() => {
     let orders = this.serviceOrders();
     
-    // Apply status filter
     if (this.filterStatus()) {
       orders = orders.filter(o => o.status === this.filterStatus());
     }
     
-    // Apply employee filter
     if (this.filterEmployee()) {
       orders = orders.filter(o => o.assignedEmployeeId === this.filterEmployee());
     }
     
-    // Apply service type filter
     if (this.filterServiceType()) {
       orders = orders.filter(o => o.serviceType === this.filterServiceType());
     }
     
-    // Apply date range filter
     if (this.filterDateFrom()) {
       const fromDate = new Date(this.filterDateFrom()!);
       fromDate.setHours(0, 0, 0, 0);
@@ -570,46 +443,7 @@ export class WashBoardComponent implements OnInit {
     const order = this.serviceOrders().find(o => o.id === event.orderId);
     if (!order) return;
     
-    if (this.isValidTransition(order.status, event.newStatus)) {
-      this.washService.updateStatus(event.orderId, event.newStatus).subscribe({
-        next: () => {
-          this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
-        },
-        error: () => {
-          this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 3000 });
-        }
-      });
-    } else {
-      this.snackBar.open('Transición de estado no válida', 'Cerrar', { duration: 3000 });
-    }
-  }
-
-  handleInvoice(orderId: string): void {
-    this.snackBar.open('Función de facturación en desarrollo', 'OK', { duration: 2000 });
-  }
-
-  onDrop(event: CdkDragDrop<ServiceOrder[]>): void {
-    const order = event.item.data as ServiceOrder;
-    const newStatus = event.container.id as ServiceStatus;
-    
-    if (event.previousContainer === event.container) {
-      // Same column - just reorder
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      return;
-    }
-    
-    // Validate transition
-    if (!this.isValidTransition(order.status, newStatus)) {
-      this.snackBar.open(
-        `No se puede mover de ${this.getStatusLabel(order.status)} a ${this.getStatusLabel(newStatus)}`,
-        'Cerrar',
-        { duration: 3000 }
-      );
-      return;
-    }
-    
-    // Update status via service
-    this.washService.updateStatus(order.id!, newStatus).subscribe({
+    this.washService.updateStatus(event.orderId, event.newStatus).subscribe({
       next: () => {
         this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
       },
@@ -619,18 +453,52 @@ export class WashBoardComponent implements OnInit {
     });
   }
 
-  private isValidTransition(currentStatus: ServiceStatus, newStatus: ServiceStatus): boolean {
-    const validTransitions: { [key: string]: ServiceStatus[] } = {
-      [ServiceStatus.PENDING]: [ServiceStatus.IN_PROGRESS],
-      [ServiceStatus.IN_PROGRESS]: [ServiceStatus.COMPLETED],
-      [ServiceStatus.COMPLETED]: [ServiceStatus.DELIVERED],
-      [ServiceStatus.DELIVERED]: []
-    };
+  handleInvoice(orderId: string): void {
+    const order = this.serviceOrders().find(o => o.id === orderId);
+    if (!order) return;
     
-    return validTransitions[currentStatus]?.includes(newStatus) || false;
+    const dialogRef = this.dialog.open(InvoiceModalComponent, {
+      width: '500px',
+      data: { order }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.confirmed) {
+        this.invoiceService.createInvoice(
+          orderId, 
+          result.paymentMethod, 
+          result.notes
+        ).subscribe({
+          next: (invoice) => {
+            this.snackBar.open(`Factura #${invoice.invoiceNumber} generada exitosamente`, 'OK', { 
+              duration: 5000
+            });
+            this.washService.loadServiceOrders();
+          },
+          error: (err) => {
+            console.error('Error creating invoice:', err);
+            this.snackBar.open('Error al generar la factura', 'Cerrar', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
-  private getStatusLabel(status: ServiceStatus): string {
-    return this.statuses.find(s => s.value === status)?.label || status;
+  onDrop(event: CdkDragDrop<ServiceOrder[]>): void {
+    const order = event.item.data as ServiceOrder;
+    const newStatus = event.container.id as ServiceStatus;
+    
+    if (event.previousContainer === event.container) {
+      return;
+    }
+    
+    this.washService.updateStatus(order.id!, newStatus).subscribe({
+      next: () => {
+        this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
+      },
+      error: () => {
+        this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 }

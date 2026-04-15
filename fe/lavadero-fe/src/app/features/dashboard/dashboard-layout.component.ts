@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -15,6 +15,7 @@ interface NavItem {
   link: string[];
   icon: string;
   exact: boolean;
+  requiredRole?: string;
 }
 
 @Component({
@@ -56,7 +57,7 @@ interface NavItem {
         <!-- Navigation Menu -->
         <nav class="nav-menu" (click)="isMobile() && sidenav.close()">
           <a
-            *ngFor="let item of navItems"
+            *ngFor="let item of filteredNavItems()"
             [routerLink]="item.link"
             [routerLinkActive]="'active'"
             [routerLinkActiveOptions]="{ exact: item.exact }"
@@ -476,10 +477,15 @@ export class DashboardLayoutComponent {
   protected readonly navItems: NavItem[] = [
     { label: 'Dashboard', link: ['/dashboard'], icon: 'dashboard', exact: true },
     { label: 'Clientes', link: ['/dashboard', 'clients'], icon: 'people', exact: false },
-    { label: 'Empleados', link: ['/dashboard', 'employees'], icon: 'engineering', exact: false },
+    { label: 'Empleados', link: ['/dashboard', 'employees'], icon: 'engineering', exact: false, requiredRole: 'ADMIN' },
     { label: 'Servicios', link: ['/dashboard', 'services'], icon: 'local_car_wash', exact: false },
     { label: 'Facturación', link: ['/dashboard', 'billing'], icon: 'receipt_long', exact: false }
   ];
+
+  filteredNavItems = computed(() => {
+    const role = this.currentUser()?.role;
+    return this.navItems.filter(item => !item.requiredRole || item.requiredRole === role);
+  });
 
   constructor() {
     window.addEventListener('resize', () => {

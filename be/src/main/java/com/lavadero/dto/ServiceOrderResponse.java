@@ -19,6 +19,7 @@ public record ServiceOrderResponse(
     LocalDateTime endTime,
     LocalDateTime deliveryTime,
     String notes,
+    boolean invoiced,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 ) {}

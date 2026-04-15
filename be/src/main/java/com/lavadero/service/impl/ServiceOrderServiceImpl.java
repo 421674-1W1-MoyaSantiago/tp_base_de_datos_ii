@@ -156,6 +156,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
                 order.getEndTime(),
                 order.getDeliveryTime(),
                 order.getNotes(),
+                order.isInvoiced(),
                 order.getCreatedAt(),
                 order.getUpdatedAt()
         );

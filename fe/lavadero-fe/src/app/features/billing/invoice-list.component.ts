@@ -418,7 +418,7 @@ export class InvoiceListComponent implements OnInit {
   }
 
   viewTicket(invoiceId: string): void {
-    this.router.navigate(['/billing/invoice-ticket', invoiceId]);
+    this.router.navigate(['/dashboard', 'billing', 'invoice-ticket', invoiceId]);
   }
 
   getPaymentMethodLabel(method: PaymentMethod): string {

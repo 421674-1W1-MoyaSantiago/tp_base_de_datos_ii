@@ -76,6 +76,7 @@ export interface ServiceOrder {
   endTime?: string;
   deliveryTime?: string;
   notes?: string;
+  invoiced?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

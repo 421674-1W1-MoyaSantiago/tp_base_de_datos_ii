@@ -109,11 +109,6 @@ import { Employee, EmployeeRole } from '../../core/models/models';
                 <th mat-header-cell *matHeaderCellDef>Acciones</th>
                 <td mat-cell *matCellDef="let employee">
                   <div class="actions">
-                    <button mat-icon-button class="action-icon-btn action-view"
-                            (click)="viewEmployee(employee)"
-                            matTooltip="Ver detalles">
-                      <mat-icon>visibility</mat-icon>
-                    </button>
                     <button mat-icon-button class="action-icon-btn action-edit"
                             (click)="editEmployee(employee)"
                             matTooltip="Editar">

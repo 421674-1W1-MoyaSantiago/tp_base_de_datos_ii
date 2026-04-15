@@ -27,24 +27,27 @@ export interface StatusChangeData {
   template: `
     <h2 mat-dialog-title>Confirmar Cambio de Estado</h2>
     <mat-dialog-content>
-      <div class="status-transition mb-4">
-        <div class="flex items-center gap-4">
-          <span class="status-badge current">{{data.currentStatus}}</span>
+      <div class="status-transition">
+        <div class="status-flex-container">
+          <span class="status-badge current">{{formatStatus(data.currentStatus)}}</span>
           <span class="arrow">→</span>
-          <span class="status-badge new">{{data.newStatus}}</span>
+          <span class="status-badge new">{{formatStatus(data.newStatus)}}</span>
         </div>
       </div>
 
-      <mat-form-field class="w-full">
-        <mat-label>Observaciones (opcional)</mat-label>
-        <textarea
-          matInput
-          [(ngModel)]="notes"
-          rows="4"
-          placeholder="Ingrese cualquier observación sobre este cambio...">
-        </textarea>
-      </mat-form-field>
+      <div class="observations-section">
+        <mat-form-field class="w-full" appearance="outline" floatLabel="always">
+          <mat-label>Observaciones (opcional)</mat-label>
+          <textarea
+            matInput
+            [(ngModel)]="notes"
+            rows="4"
+            placeholder="Ingrese cualquier observación sobre este cambio...">
+          </textarea>
+        </mat-form-field>
+      </div>
     </mat-dialog-content>
+
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancelar</button>
       <button mat-raised-button color="primary" (click)="onConfirm()">Confirmar</button>
@@ -53,36 +56,76 @@ export interface StatusChangeData {
   styles: [`
     .status-transition {
       text-align: center;
-      padding: 16px;
-      background-color: #f5f5f5;
-      border-radius: 8px;
+      padding: 32px 16px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 32px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .status-flex-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
     }
 
     .status-badge {
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-weight: 500;
-      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      min-width: 140px;
     }
 
     .status-badge.current {
-      background-color: #e3f2fd;
-      color: #1976d2;
+      background-color: #ffffff;
+      color: #64748b;
+      border: 2px solid #e2e8f0;
     }
 
     .status-badge.new {
-      background-color: #c8e6c9;
-      color: #388e3c;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #ffffff;
+      border: none;
     }
 
     .arrow {
-      font-size: 24px;
-      color: #666;
+      font-size: 28px;
+      color: #94a3b8;
+      font-weight: bold;
+    }
+
+    .observations-section {
+      margin-top: 16px;
+    }
+
+    .w-full {
+      width: 100%;
     }
 
     mat-dialog-content {
-      min-width: 400px;
-      padding-top: 16px;
+      min-width: 480px;
+      padding-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .status-flex-container {
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      mat-dialog-content {
+        min-width: 100%;
+      }
     }
   `]
 })
@@ -91,6 +134,16 @@ export class StatusChangeModalComponent {
   private dialogRef = inject(MatDialogRef<StatusChangeModalComponent>);
 
   notes: string = '';
+
+  formatStatus(status: ServiceStatus): string {
+    const labels: { [key: string]: string } = {
+      'PENDING': 'Pendiente',
+      'IN_PROGRESS': 'En proceso',
+      'COMPLETED': 'Completado',
+      'DELIVERED': 'Entregado'
+    };
+    return labels[status] || status;
+  }
 
   onConfirm() {
     this.dialogRef.close({ confirmed: true, notes: this.notes });

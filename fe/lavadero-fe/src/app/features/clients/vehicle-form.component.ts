@@ -201,7 +201,8 @@ export class VehicleFormComponent implements OnInit {
       model: ['', Validators.required],
       year: [null, [
         Validators.min(1900),
-        Validators.max(this.currentYear + 1)
+        Validators.max(this.currentYear + 1),
+        Validators.pattern('^[0-9]*$')
       ]],
       color: ['']
     });

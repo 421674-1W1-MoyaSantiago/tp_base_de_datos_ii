@@ -101,7 +101,13 @@ import { Invoice, Client, ServiceOrder, PaymentMethod } from '../../core/models/
           <mat-divider></mat-divider>
 
           <div class="service-info section">
-            <h2>Detalles del Servicio</h2>
+            <div class="section-header">
+              <h2>Detalles del Servicio</h2>
+              <button mat-stroked-button color="primary" class="no-print" (click)="viewServiceOrder()">
+                <mat-icon>visibility</mat-icon>
+                Ver Orden Completa
+              </button>
+            </div>
             @if (serviceOrder()) {
               <div class="info-grid">
                 <div class="info-item">
@@ -283,6 +289,19 @@ import { Invoice, Client, ServiceOrder, PaymentMethod } from '../../core/models/
       margin-bottom: 15px;
       border-bottom: 2px solid #1976d2;
       padding-bottom: 8px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #1976d2;
+    }
+
+    .section-header h2 {
+      margin-bottom: 0;
+      border-bottom: none;
     }
 
     .info-grid {
@@ -480,8 +499,15 @@ export class InvoiceTicketComponent implements OnInit {
     window.print();
   }
 
+  viewServiceOrder(): void {
+    const serviceOrderId = this.invoice()?.serviceOrderId;
+    if (serviceOrderId) {
+      this.router.navigate(['/dashboard', 'services', serviceOrderId]);
+    }
+  }
+
   goBack(): void {
-    this.router.navigate(['/billing/invoices']);
+    this.router.navigate(['/dashboard', 'billing']);
   }
 
   getPaymentMethodLabel(method: PaymentMethod): string {

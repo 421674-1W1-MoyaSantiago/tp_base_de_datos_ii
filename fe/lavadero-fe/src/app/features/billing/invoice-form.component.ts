@@ -333,7 +333,7 @@ export class InvoiceFormComponent implements OnInit {
         next: (invoice) => {
           this.submitting.set(false);
           this.snackBar.open('Factura generada exitosamente', 'Cerrar', { duration: 3000 });
-          this.router.navigate(['/billing/invoice-ticket', invoice.id]);
+          this.router.navigate(['/dashboard', 'billing', 'invoice-ticket', invoice.id]);
         },
         error: (error) => {
           console.error('Error creating invoice:', error);
@@ -345,6 +345,6 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/billing/invoices']);
+    this.router.navigate(['/dashboard', 'billing']);
   }
 }

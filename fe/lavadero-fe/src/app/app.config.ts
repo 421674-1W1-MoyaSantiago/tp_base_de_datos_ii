@@ -6,6 +6,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { SpanishPaginatorIntl } from './shared/spanish-paginator.intl';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
-    { provide: MAT_DATE_LOCALE, useValue: 'es-PY' }
+    { provide: MAT_DATE_LOCALE, useValue: 'es-PY' },
+    { provide: MatPaginatorIntl, useClass: SpanishPaginatorIntl }
   ]
 };

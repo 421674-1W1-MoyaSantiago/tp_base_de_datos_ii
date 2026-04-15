@@ -82,7 +82,7 @@ import { EmployeeSelectorComponent } from '../../shared/components/employee-sele
             <!-- Vehicle Select -->
             <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Vehículo</mat-label>
-              <mat-select formControlName="vehicleLicensePlate" [disabled]="!selectedClient()">
+              <mat-select formControlName="vehicleLicensePlate" [disabled]="!selectedClient()" placeholder="Seleccione un vehículo">
                 @for (vehicle of selectedClient()?.vehicles || []; track vehicle.licensePlate) {
                   <mat-option [value]="vehicle.licensePlate">
                     {{vehicle.brand}} {{vehicle.model}} - {{vehicle.licensePlate}}
@@ -115,15 +115,20 @@ import { EmployeeSelectorComponent } from '../../shared/components/employee-sele
             <!-- Price -->
             <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Precio</mat-label>
+              <span matTextPrefix>$&nbsp;</span>
               <input
                 matInput
-                type="number"
+                type="text"
                 formControlName="price"
                 placeholder="0.00"
-                min="0.01"
-                step="0.01">
-              <mat-icon matPrefix>payments</mat-icon>
-              <span matPrefix>$&nbsp;</span>
+                (input)="onPriceInput($event)">
+              <mat-icon matSuffix>payments</mat-icon>
+              @if (orderForm.get('price')?.hasError('pattern')) {
+                <mat-error>Formato de precio inválido (ej: 0 o 4124)</mat-error>
+              }
+              @if (orderForm.get('price')?.hasError('min')) {
+                <mat-error>El precio debe ser mayor a 0</mat-error>
+              }
             </mat-form-field>
 
             <!-- Notes -->
@@ -502,6 +507,33 @@ export class ServiceOrderFormComponent implements OnInit {
       clientSearch: `${client.firstName} ${client.lastName}`,
       vehicleLicensePlate: ''
     });
+  }
+
+  onPriceInput(event: any) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/[^0-9.]/g, '');
+    
+    // Handle leading zeros: don't allow "04124", allow "0", "0.50", "4124"
+    if (value.length > 1 && value.startsWith('0') && value[1] !== '.') {
+      value = value.substring(1);
+    }
+    
+    // Limit to one decimal point
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    input.value = value;
+    this.orderForm.get('price')?.setValue(value, { emitEvent: false });
+    
+    // Manual validation trigger
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue) || numericValue <= 0) {
+      this.orderForm.get('price')?.setErrors({ min: true });
+    } else {
+      this.orderForm.get('price')?.setErrors(null);
+    }
   }
 
   onSubmit() {

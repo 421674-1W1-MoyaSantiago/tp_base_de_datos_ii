@@ -22,7 +22,7 @@ export const routes: Routes = [
         { path: 'employees/:id/edit', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
         { path: 'employees/:id', loadComponent: () => import('./features/employees/employee-form.component').then(m => m.EmployeeFormComponent) },
         { path: 'services', loadChildren: () => import('./features/services/services.routes').then(m => m.SERVICE_ROUTES) },
-        { path: 'billing', loadComponent: () => import('./features/billing/invoice-list.component').then(m => m.InvoiceListComponent) }
+        { path: 'billing', loadChildren: () => import('./features/billing/billing.routes').then(m => m.BILLING_ROUTES) }
       ]
   },
   { path: 'employees', redirectTo: '/dashboard/employees', pathMatch: 'full' },

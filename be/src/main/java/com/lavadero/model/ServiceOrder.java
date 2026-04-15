@@ -55,6 +55,8 @@ public class ServiceOrder {
     
     private String notes;
     
+    private boolean invoiced = false;
+    
     @CreatedDate
     private LocalDateTime createdAt;
     

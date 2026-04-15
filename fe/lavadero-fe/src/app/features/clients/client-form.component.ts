@@ -75,11 +75,17 @@ import { Client, Vehicle } from '../../core/models/models';
                     @if (clientForm.get('dni')?.hasError('required') && clientForm.get('dni')?.touched) {
                       <mat-error>El DNI es requerido</mat-error>
                     }
+                    @if (clientForm.get('dni')?.hasError('pattern') && clientForm.get('dni')?.touched) {
+                      <mat-error>El DNI debe tener entre 8 y 9 dígitos</mat-error>
+                    }
                   </mat-form-field>
 
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Teléfono</mat-label>
-                    <input matInput formControlName="phone" placeholder="+54 9 11 1234-5678">
+                    <input matInput formControlName="phone" placeholder="123456789">
+                    @if (clientForm.get('phone')?.hasError('pattern') && clientForm.get('phone')?.touched) {
+                      <mat-error>El teléfono solo debe contener números</mat-error>
+                    }
                   </mat-form-field>
                 </div>
 
@@ -494,9 +500,9 @@ export class ClientFormComponent implements OnInit {
     this.clientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      dni: ['', Validators.required],
+      dni: ['', [Validators.required, Validators.pattern('^[0-9]{8,9}$')]],
       email: ['', [Validators.required, Validators.email]],
-      phone: [''],
+      phone: ['', [Validators.pattern('^[0-9]*$')]],
       vehicles: this.fb.array([])
     });
   }
@@ -551,7 +557,7 @@ export class ClientFormComponent implements OnInit {
       licensePlate: [vehicle?.licensePlate || '', [Validators.required, Validators.pattern(/^[A-Z0-9]{6,7}$/i)]],
       brand: [vehicle?.brand || '', Validators.required],
       model: [vehicle?.model || '', Validators.required],
-      year: [vehicle?.year || null],
+      year: [vehicle?.year || null, [Validators.min(1900), Validators.pattern('^[0-9]*$')]],
       color: [vehicle?.color || '']
     });
   }

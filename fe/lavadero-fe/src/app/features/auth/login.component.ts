@@ -115,8 +115,10 @@ import { MatIconModule } from '@angular/material/icon';
                   <mat-spinner diameter="20"></mat-spinner>
                   <span>Ingresando...</span>
                 } @else {
-                  <mat-icon>login</mat-icon>
-                  <span>Ingresar</span>
+                  <ng-container>
+                    <mat-icon>login</mat-icon>
+                    <span>Ingresar</span>
+                  </ng-container>
                 }
               </button>
             </form>
