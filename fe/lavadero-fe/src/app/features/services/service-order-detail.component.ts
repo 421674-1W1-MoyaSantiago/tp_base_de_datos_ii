@@ -258,6 +258,7 @@ export class ServiceOrderDetailComponent implements OnInit {
     const currentOrder = this.order();
     if (!currentOrder?.id) return;
     
+<<<<<<< HEAD
     const dialogRef = this.dialog.open(InvoiceModalComponent, { width: '500px', data: { order: currentOrder } });
     dialogRef.afterClosed().subscribe(result => {
       if (result?.confirmed) {
@@ -269,6 +270,10 @@ export class ServiceOrderDetailComponent implements OnInit {
         });
       }
     });
+=======
+    this.snackBar.open('Redirigiendo a facturación...', 'Cerrar', { duration: 2000 });
+    this.router.navigate(['/dashboard', 'billing', 'invoice-form', currentOrder.id]);
+>>>>>>> develop
   }
 
   isStatusActive(status: ServiceStatus): boolean {

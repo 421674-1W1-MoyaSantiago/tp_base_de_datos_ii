@@ -77,7 +77,7 @@ interface InvoiceDisplay extends Invoice {
                 color="primary"
                 type="button"
                 class="filter-btn-primary"
-                (click)="applyFilters()">
+                (click)="applyFilters(true)">
                 <mat-icon>filter_alt</mat-icon>
                 Filtrar
               </button>
@@ -319,6 +319,7 @@ export class InvoiceListComponent implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
+  allInvoices = signal<InvoiceDisplay[]>([]);
   invoices = signal<InvoiceDisplay[]>([]);
   loading = signal<boolean>(true);
   totalElements = signal<number>(0);
@@ -352,11 +353,11 @@ export class InvoiceListComponent implements OnInit {
 
   loadInvoices(): void {
     this.loading.set(true);
-    this.invoiceService.getInvoices(this.currentPage(), this.pageSize()).subscribe({
+    this.invoiceService.getInvoices(0, 1000).subscribe({
       next: (response) => {
-        const invoices = response.content || response;
-        this.invoices.set(invoices);
-        this.totalElements.set(response.totalElements || invoices.length);
+        const invoices = Array.isArray(response) ? response : (response.content || []);
+        this.allInvoices.set(invoices);
+        this.applyFilters();
         this.loading.set(false);
         
         // Load client names
@@ -390,15 +391,47 @@ export class InvoiceListComponent implements OnInit {
   }
 
   updateInvoiceClientName(invoiceId: string, clientName: string): void {
+    this.allInvoices.update(invoices =>
+      invoices.map(inv => inv.id === invoiceId ? { ...inv, clientName } : inv)
+    );
+
     this.invoices.update(invoices =>
       invoices.map(inv => inv.id === invoiceId ? { ...inv, clientName } : inv)
     );
   }
 
-  applyFilters(): void {
-    // In a real implementation, you would pass these filters to the backend
-    this.currentPage.set(0);
-    this.loadInvoices();
+  applyFilters(resetPage: boolean = false): void {
+    if (resetPage) {
+      this.currentPage.set(0);
+    }
+
+    const { fromDate, toDate, paymentMethod } = this.filterForm.value;
+
+    const normalizedFromDate = fromDate ? new Date(fromDate) : null;
+    if (normalizedFromDate) {
+      normalizedFromDate.setHours(0, 0, 0, 0);
+    }
+
+    const normalizedToDate = toDate ? new Date(toDate) : null;
+    if (normalizedToDate) {
+      normalizedToDate.setHours(23, 59, 59, 999);
+    }
+
+    const filtered = this.allInvoices().filter((invoice) => {
+      const matchesPaymentMethod = !paymentMethod || invoice.paymentMethod === paymentMethod;
+
+      const issuedAt = new Date(invoice.issuedAt);
+      const matchesFromDate = !normalizedFromDate || issuedAt >= normalizedFromDate;
+      const matchesToDate = !normalizedToDate || issuedAt <= normalizedToDate;
+
+      return matchesPaymentMethod && matchesFromDate && matchesToDate;
+    });
+
+    this.totalElements.set(filtered.length);
+
+    const start = this.currentPage() * this.pageSize();
+    const end = start + this.pageSize();
+    this.invoices.set(filtered.slice(start, end));
   }
 
   clearFilters(): void {
@@ -408,13 +441,13 @@ export class InvoiceListComponent implements OnInit {
       paymentMethod: ''
     });
     this.currentPage.set(0);
-    this.loadInvoices();
+    this.applyFilters();
   }
 
   onPageChange(event: PageEvent): void {
     this.currentPage.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
-    this.loadInvoices();
+    this.applyFilters();
   }
 
   viewTicket(invoiceId: string): void {

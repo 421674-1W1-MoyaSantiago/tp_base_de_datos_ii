@@ -10,7 +10,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+<<<<<<< HEAD
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+=======
+import { Router } from '@angular/router';
+>>>>>>> develop
 import { WashService } from '../../core/services/wash.service';
 import { InvoiceService } from '../../core/services/invoice.service';
 import { InvoiceModalComponent } from '../../shared/components/invoice-modal.component';
@@ -352,7 +356,11 @@ export class WashBoardComponent implements OnInit {
   private washService = inject(WashService);
   private invoiceService = inject(InvoiceService);
   private snackBar = inject(MatSnackBar);
+<<<<<<< HEAD
   private dialog = inject(MatDialog);
+=======
+  private router = inject(Router);
+>>>>>>> develop
 
   serviceOrders = this.washService.serviceOrders;
 
@@ -443,7 +451,50 @@ export class WashBoardComponent implements OnInit {
     const order = this.serviceOrders().find(o => o.id === event.orderId);
     if (!order) return;
     
+<<<<<<< HEAD
     this.washService.updateStatus(event.orderId, event.newStatus).subscribe({
+=======
+    if (this.isValidTransition(order.status, event.newStatus)) {
+      this.washService.updateStatus(event.orderId, event.newStatus).subscribe({
+        next: () => {
+          this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
+        },
+        error: () => {
+          this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 3000 });
+        }
+      });
+    } else {
+      this.snackBar.open('Transición de estado no válida', 'Cerrar', { duration: 3000 });
+    }
+  }
+
+  handleInvoice(orderId: string): void {
+    this.router.navigate(['/dashboard', 'billing', 'invoice-form', orderId]);
+  }
+
+  onDrop(event: CdkDragDrop<ServiceOrder[]>): void {
+    const order = event.item.data as ServiceOrder;
+    const newStatus = event.container.id as ServiceStatus;
+    
+    if (event.previousContainer === event.container) {
+      // Same column - just reorder
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      return;
+    }
+    
+    // Validate transition
+    if (!this.isValidTransition(order.status, newStatus)) {
+      this.snackBar.open(
+        `No se puede mover de ${this.getStatusLabel(order.status)} a ${this.getStatusLabel(newStatus)}`,
+        'Cerrar',
+        { duration: 3000 }
+      );
+      return;
+    }
+    
+    // Update status via service
+    this.washService.updateStatus(order.id!, newStatus).subscribe({
+>>>>>>> develop
       next: () => {
         this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
       },
