@@ -54,6 +54,7 @@ import { Client, Vehicle } from '../../core/models/models';
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Nombre</mat-label>
                     <input matInput formControlName="firstName" placeholder="Juan">
+                    <mat-hint>Ingrese el nombre del cliente (sin números)</mat-hint>
                     @if (clientForm.get('firstName')?.hasError('required') && clientForm.get('firstName')?.touched) {
                       <mat-error>El nombre es requerido</mat-error>
                     }
@@ -62,6 +63,7 @@ import { Client, Vehicle } from '../../core/models/models';
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Apellido</mat-label>
                     <input matInput formControlName="lastName" placeholder="Pérez">
+                    <mat-hint>Ingrese el apellido del cliente</mat-hint>
                     @if (clientForm.get('lastName')?.hasError('required') && clientForm.get('lastName')?.touched) {
                       <mat-error>El apellido es requerido</mat-error>
                     }
@@ -72,6 +74,7 @@ import { Client, Vehicle } from '../../core/models/models';
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>DNI</mat-label>
                     <input matInput formControlName="dni" placeholder="12345678">
+                    <mat-hint>Solo números, entre 8 y 9 dígitos</mat-hint>
                     @if (clientForm.get('dni')?.hasError('required') && clientForm.get('dni')?.touched) {
                       <mat-error>El DNI es requerido</mat-error>
                     }
@@ -83,6 +86,7 @@ import { Client, Vehicle } from '../../core/models/models';
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Teléfono</mat-label>
                     <input matInput formControlName="phone" placeholder="123456789">
+                    <mat-hint>Incluya código de área, solo números</mat-hint>
                     @if (clientForm.get('phone')?.hasError('pattern') && clientForm.get('phone')?.touched) {
                       <mat-error>El teléfono solo debe contener números</mat-error>
                     }
@@ -93,6 +97,7 @@ import { Client, Vehicle } from '../../core/models/models';
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Email</mat-label>
                     <input matInput type="email" formControlName="email" placeholder="ejemplo@email.com">
+                    <mat-hint>Ingrese un correo electrónico válido</mat-hint>
                     @if (clientForm.get('email')?.hasError('required') && clientForm.get('email')?.touched) {
                       <mat-error>El email es requerido</mat-error>
                     }
@@ -144,6 +149,7 @@ import { Client, Vehicle } from '../../core/models/models';
                           <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Patente</mat-label>
                             <input matInput formControlName="licensePlate" placeholder="ABC123">
+                            <mat-hint>Formato sugerido: ABC123 o AB123CD</mat-hint>
                             @if (vehicle.get('licensePlate')?.hasError('required') && vehicle.get('licensePlate')?.touched) {
                               <mat-error>La patente es requerida</mat-error>
                             }
@@ -155,6 +161,7 @@ import { Client, Vehicle } from '../../core/models/models';
                           <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Marca</mat-label>
                             <input matInput formControlName="brand" placeholder="Toyota">
+                            <mat-hint>Marca comercial del vehículo</mat-hint>
                             @if (vehicle.get('brand')?.hasError('required') && vehicle.get('brand')?.touched) {
                               <mat-error>La marca es requerida</mat-error>
                             }
@@ -165,6 +172,7 @@ import { Client, Vehicle } from '../../core/models/models';
                           <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Modelo</mat-label>
                             <input matInput formControlName="model" placeholder="Corolla">
+                            <mat-hint>Modelo del vehículo</mat-hint>
                             @if (vehicle.get('model')?.hasError('required') && vehicle.get('model')?.touched) {
                               <mat-error>El modelo es requerido</mat-error>
                             }
@@ -173,11 +181,13 @@ import { Client, Vehicle } from '../../core/models/models';
                           <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Año</mat-label>
                             <input matInput type="number" formControlName="year" placeholder="2020">
+                            <mat-hint>Año de fabricación (opcional)</mat-hint>
                           </mat-form-field>
 
                           <mat-form-field appearance="outline" class="full-width">
                             <mat-label>Color</mat-label>
                             <input matInput formControlName="color" placeholder="Rojo">
+                            <mat-hint>Color principal del vehículo (opcional)</mat-hint>
                           </mat-form-field>
                         </div>
                       </mat-card-content>

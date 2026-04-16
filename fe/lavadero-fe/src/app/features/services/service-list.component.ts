@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { WashService } from '../../core/services/wash.service';
 import { InvoiceService } from '../../core/services/invoice.service';
+import { ClientService } from '../../core/services/client.service';
 import { InvoiceModalComponent } from '../../shared/components/invoice-modal.component';
 import { ServiceOrder, ServiceStatus } from '../../core/models/models';
 
@@ -63,7 +64,7 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
                     <mat-icon>person</mat-icon>
                     <div>
                       <span class="detail-label">Cliente</span>
-                      <span class="detail-value">{{ formatClientId(order.clientId) }}</span>
+                      <span class="detail-value">{{ getClientDisplayName(order.clientId) }}</span>
                     </div>
                   </div>
                   <div class="detail-item price" [class.paid]="order.invoiced" [class.unpaid]="!order.invoiced">
@@ -147,6 +148,7 @@ import { ServiceOrder, ServiceStatus } from '../../core/models/models';
 export class ServiceListComponent implements OnInit {
   private washService = inject(WashService);
   private invoiceService = inject(InvoiceService);
+  private clientService = inject(ClientService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
@@ -154,6 +156,22 @@ export class ServiceListComponent implements OnInit {
   ServiceStatus = ServiceStatus;
   loading = this.washService.loading;
   serviceOrders = this.washService.serviceOrders;
+  clientNames = signal<Record<string, string>>({});
+  private requestedClientIds = new Set<string>();
+
+  constructor() {
+    effect(() => {
+      const uniqueClientIds = Array.from(
+        new Set(
+          this.serviceOrders()
+            .map(order => order.clientId)
+            .filter((id): id is string => !!id)
+        )
+      );
+
+      uniqueClientIds.forEach(clientId => this.fetchClientName(clientId));
+    });
+  }
 
   sortedOrders = computed(() => [...this.serviceOrders()].sort((a, b) => {
     const left = a.createdAt ? new Date(a.createdAt).getTime() : 0;
@@ -200,6 +218,31 @@ export class ServiceListComponent implements OnInit {
   getStatusLabel(status: ServiceStatus | string): string {
     const labels: any = { PENDING: 'Pendiente', IN_PROGRESS: 'En progreso', COMPLETED: 'Completado', DELIVERED: 'Entregado' };
     return labels[status] || status;
+  }
+
+  getClientDisplayName(clientId: string): string {
+    if (!clientId) return '-';
+
+    const name = this.clientNames()[clientId];
+    if (name) return name;
+
+    this.fetchClientName(clientId);
+    return 'Cargando cliente...';
+  }
+
+  private fetchClientName(clientId: string): void {
+    if (!clientId || this.requestedClientIds.has(clientId) || this.clientNames()[clientId]) return;
+
+    this.requestedClientIds.add(clientId);
+    this.clientService.getClientById(clientId).subscribe({
+      next: (client) => {
+        const fullName = `${client.firstName ?? ''} ${client.lastName ?? ''}`.trim() || this.formatClientId(clientId);
+        this.clientNames.update(current => ({ ...current, [clientId]: fullName }));
+      },
+      error: () => {
+        this.clientNames.update(current => ({ ...current, [clientId]: this.formatClientId(clientId) }));
+      }
+    });
   }
 
   formatClientId(clientId: string): string {
