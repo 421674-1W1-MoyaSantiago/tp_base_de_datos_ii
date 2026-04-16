@@ -1,5 +1,6 @@
 package com.lavadero.controller;
 
+import com.lavadero.dto.DashboardStatusDistributionResponse;
 import com.lavadero.dto.ServiceOrderRequest;
 import com.lavadero.dto.ServiceOrderResponse;
 import com.lavadero.dto.StatusChangeRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -68,6 +70,14 @@ public class ServiceOrderController {
     ) {
         Page<ServiceOrderResponse> orders = serviceOrderService.getServiceOrdersByDateRange(start, end, pageable);
         return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/analytics/status-distribution")
+    public ResponseEntity<DashboardStatusDistributionResponse> getDashboardStatusDistribution(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        DashboardStatusDistributionResponse response = serviceOrderService.getDashboardStatusDistribution(date);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/status")

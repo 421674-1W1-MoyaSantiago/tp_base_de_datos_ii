@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ServiceOrder, ServiceStatus } from '../models/models';
+import { DashboardStatusDistribution, ServiceOrder, ServiceStatus } from '../models/models';
 
 interface PageResponse<T> {
   content: T[];
@@ -58,5 +58,14 @@ export class WashService {
 
   getServiceOrdersByClient(clientId: string): Observable<ServiceOrder[]> {
     return this.http.get<ServiceOrder[]>(`${environment.apiUrl}/service-orders/by-client/${clientId}`);
+  }
+
+  getDashboardStatusDistribution(date: string): Observable<DashboardStatusDistribution> {
+    const params = new HttpParams().set('date', date);
+
+    return this.http.get<DashboardStatusDistribution>(
+      `${environment.apiUrl}/service-orders/analytics/status-distribution`,
+      { params }
+    );
   }
 }

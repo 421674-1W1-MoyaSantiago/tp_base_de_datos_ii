@@ -164,6 +164,7 @@ db.employees.insertOne({
 - `POST /api/service-orders` - Crear orden
 - `GET /api/service-orders/status/{status}` - Filtrar por estado
 - `GET /api/service-orders/by-client/{clientId}` - Por cliente
+- `GET /api/service-orders/analytics/status-distribution?date={yyyy-MM-dd}` - Distribución diaria para dashboard (date opcional)
 - `PATCH /api/service-orders/{id}/status` - Cambiar estado
 - `PATCH /api/service-orders/{id}/assign/{employeeId}` - Asignar empleado
 
@@ -173,6 +174,7 @@ db.employees.insertOne({
 - `POST /api/invoices` - Crear factura
 - `GET /api/invoices/by-client/{clientId}` - Por cliente
 - `GET /api/invoices/report?fromDate={date}&toDate={date}` - Reporte de ventas
+- `GET /api/invoices/analytics/daily-revenue?startDate={yyyy-MM-dd}&days=14` - Serie diaria para dashboard (ventana navegable; parámetros opcionales)
 
 ## 🗄️ Modelo de Datos
 

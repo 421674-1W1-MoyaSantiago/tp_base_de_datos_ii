@@ -1,5 +1,6 @@
 package com.lavadero.service.impl;
 
+import com.lavadero.dto.DashboardStatusDistributionResponse;
 import com.lavadero.dto.ServiceOrderRequest;
 import com.lavadero.dto.ServiceOrderResponse;
 import com.lavadero.exception.InvalidStateTransitionException;
@@ -16,8 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -133,6 +138,35 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
     ) {
         return serviceOrderRepository.findByCreatedAtBetween(start, end, pageable)
                 .map(this::mapToResponse);
+    }
+
+    @Override
+    public DashboardStatusDistributionResponse getDashboardStatusDistribution(LocalDate date) {
+        LocalDate effectiveDate = date != null ? date : LocalDate.now();
+        LocalDateTime startDateTime = effectiveDate.atStartOfDay();
+        LocalDateTime endDateTime = effectiveDate.plusDays(1).atStartOfDay().minusNanos(1);
+
+        Map<ServiceStatus, Long> countsByStatus = serviceOrderRepository
+                .findByCreatedAtBetween(startDateTime, endDateTime)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        ServiceOrder::getStatus,
+                        () -> new EnumMap<>(ServiceStatus.class),
+                        Collectors.counting()
+                ));
+
+        List<DashboardStatusDistributionResponse.StatusCount> statuses = Arrays.stream(ServiceStatus.values())
+                .map(status -> new DashboardStatusDistributionResponse.StatusCount(
+                        status,
+                        countsByStatus.getOrDefault(status, 0L)
+                ))
+                .toList();
+
+        long totalOrders = statuses.stream()
+                .mapToLong(DashboardStatusDistributionResponse.StatusCount::count)
+                .sum();
+
+        return new DashboardStatusDistributionResponse(statuses, totalOrders);
     }
 
     private String generateOrderNumber() {

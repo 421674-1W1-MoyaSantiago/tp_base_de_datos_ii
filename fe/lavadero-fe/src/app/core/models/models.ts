@@ -115,3 +115,26 @@ export interface SalesReport {
   byPaymentMethod: { [key: string]: number };
   countByPaymentMethod: { [key: string]: number };
 }
+
+export interface DashboardStatusCount {
+  status: ServiceStatus;
+  count: number;
+}
+
+export interface DashboardStatusDistribution {
+  statuses: DashboardStatusCount[];
+  totalOrders: number;
+}
+
+export interface DashboardDailyRevenuePoint {
+  date: string;
+  totalAmount: number;
+  invoiceCount: number;
+}
+
+export interface DashboardDailyRevenue {
+  days: number;
+  points: DashboardDailyRevenuePoint[];
+  totalAmount: number;
+  totalInvoices: number;
+}

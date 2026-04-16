@@ -1,5 +1,6 @@
 package com.lavadero.service;
 
+import com.lavadero.dto.DashboardDailyRevenueResponse;
 import com.lavadero.dto.InvoiceRequest;
 import com.lavadero.dto.InvoiceResponse;
 import com.lavadero.dto.SalesReportResponse;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -145,13 +147,97 @@ class InvoiceServiceImplTest {
                 .doesNotContainKey("TRANSFER");
     }
 
+    @Test
+    @DisplayName("dashboard daily revenue: returns ordered series from selected start date")
+    void dashboardDailyRevenueSeriesFromSelectedStartDate() {
+        LocalDate startDate = LocalDate.now().minusDays(2);
+        LocalDate thirdDate = startDate.plusDays(2);
+
+        Invoice paidTwoDaysAgo = invoice(
+                "inv-10",
+                "75.00",
+                PaymentMethod.CARD,
+                PaymentStatus.PAID,
+                startDate.atTime(9, 30)
+        );
+        Invoice paidToday = invoice(
+                "inv-11",
+                "100.00",
+                PaymentMethod.CASH,
+                PaymentStatus.PAID,
+                thirdDate.atTime(14, 15)
+        );
+        Invoice unpaidToday = invoice(
+                "inv-12",
+                "999.00",
+                PaymentMethod.TRANSFER,
+                PaymentStatus.PENDING,
+                thirdDate.atTime(16, 10)
+        );
+
+        when(invoiceRepository.findByIssuedAtBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(paidTwoDaysAgo, paidToday, unpaidToday));
+
+        DashboardDailyRevenueResponse response = invoiceService.getDashboardDailyRevenue(startDate, 3);
+
+        assertThat(response.days()).isEqualTo(3);
+        assertThat(response.totalAmount()).isEqualByComparingTo("175.00");
+        assertThat(response.totalInvoices()).isEqualTo(2L);
+        assertThat(response.points())
+                .extracting(DashboardDailyRevenueResponse.RevenuePoint::date)
+                .containsExactly(startDate, startDate.plusDays(1), thirdDate);
+        assertThat(response.points())
+                .extracting(DashboardDailyRevenueResponse.RevenuePoint::totalAmount)
+                .containsExactly(
+                        new BigDecimal("75.00"),
+                        BigDecimal.ZERO,
+                        new BigDecimal("100.00")
+                );
+        assertThat(response.points())
+                .extracting(DashboardDailyRevenueResponse.RevenuePoint::invoiceCount)
+                .containsExactly(1L, 0L, 1L);
+    }
+
+    @Test
+    @DisplayName("dashboard daily revenue: defaults start date to today and zero-fills future dates")
+    void dashboardDailyRevenueDefaultsToToday() {
+        LocalDate today = LocalDate.now();
+
+        Invoice paidToday = invoice(
+                "inv-20",
+                "50.00",
+                PaymentMethod.CARD,
+                PaymentStatus.PAID,
+                today.atTime(11, 0)
+        );
+
+        when(invoiceRepository.findByIssuedAtBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(paidToday));
+
+        DashboardDailyRevenueResponse response = invoiceService.getDashboardDailyRevenue(null, 2);
+
+        assertThat(response.points())
+                .extracting(DashboardDailyRevenueResponse.RevenuePoint::date)
+                .containsExactly(today, today.plusDays(1));
+        assertThat(response.points())
+                .extracting(DashboardDailyRevenueResponse.RevenuePoint::totalAmount)
+                .containsExactly(new BigDecimal("50.00"), BigDecimal.ZERO);
+        assertThat(response.points())
+                .extracting(DashboardDailyRevenueResponse.RevenuePoint::invoiceCount)
+                .containsExactly(1L, 0L);
+    }
+
     private Invoice invoice(String id, String amount, PaymentMethod method, PaymentStatus status) {
+        return invoice(id, amount, method, status, LocalDateTime.now());
+    }
+
+    private Invoice invoice(String id, String amount, PaymentMethod method, PaymentStatus status, LocalDateTime issuedAt) {
         Invoice invoice = new Invoice();
         invoice.setId(id);
         invoice.setAmount(new BigDecimal(amount));
         invoice.setPaymentMethod(method);
         invoice.setPaymentStatus(status);
-        invoice.setIssuedAt(LocalDateTime.now());
+        invoice.setIssuedAt(issuedAt);
         return invoice;
     }
 }

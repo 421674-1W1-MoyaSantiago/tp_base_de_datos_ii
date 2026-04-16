@@ -1,5 +1,6 @@
 package com.lavadero.controller;
 
+import com.lavadero.dto.DashboardDailyRevenueResponse;
 import com.lavadero.dto.InvoiceRequest;
 import com.lavadero.dto.InvoiceResponse;
 import com.lavadero.dto.SalesReportResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -70,5 +72,14 @@ public class InvoiceController {
     ) {
         SalesReportResponse report = invoiceService.getSalesReport(fromDate, toDate);
         return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/analytics/daily-revenue")
+    public ResponseEntity<DashboardDailyRevenueResponse> getDashboardDailyRevenue(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(defaultValue = "14") Integer days
+    ) {
+        DashboardDailyRevenueResponse response = invoiceService.getDashboardDailyRevenue(startDate, days);
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,6 @@
 package com.lavadero.service.impl;
 
+import com.lavadero.dto.DashboardDailyRevenueResponse;
 import com.lavadero.dto.InvoiceRequest;
 import com.lavadero.dto.InvoiceResponse;
 import com.lavadero.dto.SalesReportResponse;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -123,6 +125,53 @@ public class InvoiceServiceImpl implements InvoiceService {
                 totalInvoices,
                 byPaymentMethod,
                 countByPaymentMethod
+        );
+    }
+
+    @Override
+    public DashboardDailyRevenueResponse getDashboardDailyRevenue(LocalDate startDate, int days) {
+        int safeDays = Math.max(days, 1);
+        LocalDate effectiveStartDate = startDate != null ? startDate : LocalDate.now();
+        LocalDate windowEndDate = effectiveStartDate.plusDays(safeDays - 1L);
+
+        LocalDateTime startDateTime = effectiveStartDate.atStartOfDay();
+        LocalDateTime endDateTime = windowEndDate.plusDays(1).atStartOfDay().minusNanos(1);
+
+        Map<LocalDate, List<Invoice>> paidInvoicesByDate = invoiceRepository
+                .findByIssuedAtBetween(startDateTime, endDateTime)
+                .stream()
+                .filter(invoice -> invoice.getPaymentStatus() == PaymentStatus.PAID)
+                .collect(Collectors.groupingBy(invoice -> invoice.getIssuedAt().toLocalDate()));
+
+        List<DashboardDailyRevenueResponse.RevenuePoint> points = effectiveStartDate
+                .datesUntil(windowEndDate.plusDays(1))
+                .map(date -> {
+                    List<Invoice> invoicesByDate = paidInvoicesByDate.getOrDefault(date, List.of());
+                    BigDecimal totalAmount = invoicesByDate.stream()
+                            .map(Invoice::getAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    long invoiceCount = invoicesByDate.size();
+                    return new DashboardDailyRevenueResponse.RevenuePoint(
+                            date,
+                            totalAmount,
+                            invoiceCount
+                    );
+                })
+                .toList();
+
+        BigDecimal totalAmount = points.stream()
+                .map(DashboardDailyRevenueResponse.RevenuePoint::totalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        long totalInvoices = points.stream()
+                .mapToLong(DashboardDailyRevenueResponse.RevenuePoint::invoiceCount)
+                .sum();
+
+        return new DashboardDailyRevenueResponse(
+                safeDays,
+                points,
+                totalAmount,
+                totalInvoices
         );
     }
 

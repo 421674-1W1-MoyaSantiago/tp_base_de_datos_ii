@@ -29,6 +29,8 @@ public interface ServiceOrderRepository extends MongoRepository<ServiceOrder, St
         LocalDateTime end, 
         Pageable pageable
     );
+
+    List<ServiceOrder> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
     
     boolean existsByOrderNumber(String orderNumber);
 }

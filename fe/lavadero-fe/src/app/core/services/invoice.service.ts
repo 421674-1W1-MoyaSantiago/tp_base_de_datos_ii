@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Invoice, PaymentMethod, SalesReport } from '../models/models';
+import { DashboardDailyRevenue, Invoice, PaymentMethod, SalesReport } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +33,17 @@ export class InvoiceService {
   getSalesReport(fromDate: string, toDate: string): Observable<SalesReport> {
     return this.http.get<SalesReport>(
       `${environment.apiUrl}/invoices/report?fromDate=${fromDate}&toDate=${toDate}`
+    );
+  }
+
+  getDashboardDailyRevenue(startDate: string, days: number = 14): Observable<DashboardDailyRevenue> {
+    const params = new HttpParams()
+      .set('startDate', startDate)
+      .set('days', days.toString());
+
+    return this.http.get<DashboardDailyRevenue>(
+      `${environment.apiUrl}/invoices/analytics/daily-revenue`,
+      { params }
     );
   }
 }

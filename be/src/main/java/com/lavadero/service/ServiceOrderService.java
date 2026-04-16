@@ -1,11 +1,13 @@
 package com.lavadero.service;
 
+import com.lavadero.dto.DashboardStatusDistributionResponse;
 import com.lavadero.dto.ServiceOrderRequest;
 import com.lavadero.dto.ServiceOrderResponse;
 import com.lavadero.model.ServiceStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,4 +24,5 @@ public interface ServiceOrderService {
         LocalDateTime end, 
         Pageable pageable
     );
+    DashboardStatusDistributionResponse getDashboardStatusDistribution(LocalDate date);
 }

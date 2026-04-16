@@ -1,5 +1,6 @@
 package com.lavadero.service;
 
+import com.lavadero.dto.DashboardStatusDistributionResponse;
 import com.lavadero.dto.ServiceOrderRequest;
 import com.lavadero.dto.ServiceOrderResponse;
 import com.lavadero.exception.InvalidStateTransitionException;
@@ -20,11 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -135,5 +139,67 @@ class ServiceOrderServiceImplTest {
         assertThatThrownBy(() -> serviceOrderService.updateStatus("missing", ServiceStatus.IN_PROGRESS))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Service order not found");
+    }
+
+    @Test
+    @DisplayName("dashboard status distribution: includes all statuses for selected date")
+    void dashboardStatusDistributionIncludesAllStatusesForDate() {
+        LocalDate selectedDate = LocalDate.now().minusDays(1);
+
+        ServiceOrder pendingOne = new ServiceOrder();
+        pendingOne.setStatus(ServiceStatus.PENDING);
+        pendingOne.setCreatedAt(selectedDate.atTime(8, 30));
+
+        ServiceOrder pendingTwo = new ServiceOrder();
+        pendingTwo.setStatus(ServiceStatus.PENDING);
+        pendingTwo.setCreatedAt(selectedDate.atTime(10, 0));
+
+        ServiceOrder completed = new ServiceOrder();
+        completed.setStatus(ServiceStatus.COMPLETED);
+        completed.setCreatedAt(selectedDate.atTime(14, 45));
+
+        when(serviceOrderRepository.findByCreatedAtBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(pendingOne, pendingTwo, completed));
+
+        DashboardStatusDistributionResponse response = serviceOrderService.getDashboardStatusDistribution(selectedDate);
+
+        assertThat(response.totalOrders()).isEqualTo(3L);
+        assertThat(response.statuses())
+                .extracting(
+                        DashboardStatusDistributionResponse.StatusCount::status,
+                        DashboardStatusDistributionResponse.StatusCount::count
+                )
+                .containsExactly(
+                        tuple(ServiceStatus.PENDING, 2L),
+                        tuple(ServiceStatus.IN_PROGRESS, 0L),
+                        tuple(ServiceStatus.COMPLETED, 1L),
+                        tuple(ServiceStatus.DELIVERED, 0L)
+                );
+    }
+
+    @Test
+    @DisplayName("dashboard status distribution: defaults to today when date is missing")
+    void dashboardStatusDistributionDefaultsToToday() {
+        ServiceOrder inProgress = new ServiceOrder();
+        inProgress.setStatus(ServiceStatus.IN_PROGRESS);
+        inProgress.setCreatedAt(LocalDate.now().atTime(9, 0));
+
+        when(serviceOrderRepository.findByCreatedAtBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(inProgress));
+
+        DashboardStatusDistributionResponse response = serviceOrderService.getDashboardStatusDistribution(null);
+
+        assertThat(response.totalOrders()).isEqualTo(1L);
+        assertThat(response.statuses())
+                .extracting(
+                        DashboardStatusDistributionResponse.StatusCount::status,
+                        DashboardStatusDistributionResponse.StatusCount::count
+                )
+                .containsExactly(
+                        tuple(ServiceStatus.PENDING, 0L),
+                        tuple(ServiceStatus.IN_PROGRESS, 1L),
+                        tuple(ServiceStatus.COMPLETED, 0L),
+                        tuple(ServiceStatus.DELIVERED, 0L)
+                );
     }
 }
