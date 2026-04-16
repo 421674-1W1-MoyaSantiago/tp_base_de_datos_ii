@@ -77,17 +77,17 @@ import { PaymentMethod, ServiceOrder, Client } from '../../core/models/models';
               <div class="form-section">
                 <h3>Información de Pago</h3>
                 
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Método de Pago</mat-label>
+                <div class="payment-method-section full-width">
+                  <label class="payment-label">Método de Pago</label>
                   <mat-radio-group formControlName="paymentMethod" class="payment-method-group">
                     <mat-radio-button value="CASH">Efectivo</mat-radio-button>
                     <mat-radio-button value="CARD">Tarjeta</mat-radio-button>
                     <mat-radio-button value="TRANSFER">Transferencia</mat-radio-button>
                   </mat-radio-group>
                   @if (invoiceForm.get('paymentMethod')?.invalid && invoiceForm.get('paymentMethod')?.touched) {
-                    <mat-error>Seleccione un método de pago</mat-error>
+                    <div class="field-error">Seleccione un método de pago</div>
                   }
-                </mat-form-field>
+                </div>
 
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Notas (Opcional)</mat-label>
@@ -208,6 +208,24 @@ import { PaymentMethod, ServiceOrder, Client } from '../../core/models/models';
       flex-direction: column;
       gap: 10px;
       margin: 15px 0;
+    }
+
+    .payment-method-section {
+      margin-bottom: 12px;
+    }
+
+    .payment-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .field-error {
+      color: #d32f2f;
+      font-size: 12px;
+      margin-top: 6px;
     }
 
     .amount-display {
@@ -333,7 +351,7 @@ export class InvoiceFormComponent implements OnInit {
         next: (invoice) => {
           this.submitting.set(false);
           this.snackBar.open('Factura generada exitosamente', 'Cerrar', { duration: 3000 });
-          this.router.navigate(['/billing/invoice-ticket', invoice.id]);
+          this.router.navigate(['/dashboard', 'billing', 'invoice-ticket', invoice.id]);
         },
         error: (error) => {
           console.error('Error creating invoice:', error);
@@ -345,6 +363,6 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/billing/invoices']);
+    this.router.navigate(['/dashboard', 'billing']);
   }
 }

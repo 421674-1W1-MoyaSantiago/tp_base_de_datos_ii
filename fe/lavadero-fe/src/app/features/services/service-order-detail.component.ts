@@ -512,12 +512,10 @@ export class ServiceOrderDetailComponent implements OnInit {
 
   createInvoice() {
     const currentOrder = this.order();
-    if (!currentOrder) return;
+    if (!currentOrder?.id) return;
     
     this.snackBar.open('Redirigiendo a facturación...', 'Cerrar', { duration: 2000 });
-    this.router.navigate(['/dashboard', 'billing'], { 
-      queryParams: { serviceOrderId: currentOrder.id } 
-    });
+    this.router.navigate(['/dashboard', 'billing', 'invoice-form', currentOrder.id]);
   }
 
   isStatusActive(status: ServiceStatus): boolean {

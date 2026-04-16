@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { WashService } from '../../core/services/wash.service';
 import { ServiceOrder, ServiceStatus, ServiceType } from '../../core/models/models';
 import { WashCardComponent } from './wash-card.component';
@@ -475,6 +476,7 @@ import { WashCardComponent } from './wash-card.component';
 export class WashBoardComponent implements OnInit {
   private washService = inject(WashService);
   private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
 
   serviceOrders = this.washService.serviceOrders;
 
@@ -585,7 +587,7 @@ export class WashBoardComponent implements OnInit {
   }
 
   handleInvoice(orderId: string): void {
-    this.snackBar.open('Función de facturación en desarrollo', 'OK', { duration: 2000 });
+    this.router.navigate(['/dashboard', 'billing', 'invoice-form', orderId]);
   }
 
   onDrop(event: CdkDragDrop<ServiceOrder[]>): void {

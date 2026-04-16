@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -417,6 +417,8 @@ import { Invoice, Client, ServiceOrder, PaymentMethod } from '../../core/models/
   `]
 })
 export class InvoiceTicketComponent implements OnInit {
+  @ViewChild('ticketContent') ticketContentRef?: ElementRef<HTMLElement>;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private invoiceService = inject(InvoiceService);
@@ -477,11 +479,251 @@ export class InvoiceTicketComponent implements OnInit {
   }
 
   print(): void {
-    window.print();
+    const ticketElement = this.ticketContentRef?.nativeElement;
+    if (!ticketElement) {
+      window.print();
+      return;
+    }
+
+    const printHtml = `
+      <!doctype html>
+      <html lang="es">
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Factura</title>
+          <style>
+            :root {
+              color-scheme: light;
+            }
+
+            * {
+              box-sizing: border-box;
+            }
+
+            body {
+              margin: 0;
+              padding: 24px;
+              font-family: Roboto, 'Segoe UI', Arial, sans-serif;
+              background: #ffffff;
+              color: #111827;
+            }
+
+            .print-wrapper {
+              max-width: 820px;
+              margin: 0 auto;
+            }
+
+            .ticket-content {
+              border: 1px solid #d1d5db;
+              border-radius: 12px;
+              padding: 24px;
+              box-shadow: none;
+              background: #ffffff;
+            }
+
+            .ticket-header {
+              text-align: center;
+              margin-bottom: 22px;
+            }
+
+            .logo {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 8px;
+            }
+
+            .car-icon {
+              display: none;
+            }
+
+            .logo h1 {
+              margin: 0;
+              font-size: 28px;
+              color: #0f172a;
+            }
+
+            .company-info {
+              margin-top: 12px;
+              color: #475569;
+              font-size: 13px;
+            }
+
+            .company-info p {
+              margin: 4px 0;
+            }
+
+            mat-divider {
+              display: block;
+              border-top: 1px solid #e5e7eb;
+              margin: 16px 0;
+            }
+
+            .ticket-info,
+            .payment-details,
+            .payment-row,
+            .info-row {
+              width: 100%;
+            }
+
+            .info-row,
+            .payment-row {
+              display: flex;
+              justify-content: space-between;
+              gap: 18px;
+              padding: 7px 0;
+            }
+
+            .section {
+              margin: 18px 0;
+              page-break-inside: avoid;
+            }
+
+            .section h2 {
+              margin: 0 0 10px;
+              font-size: 16px;
+              color: #1e3a8a;
+              border-bottom: 1px solid #bfdbfe;
+              padding-bottom: 6px;
+            }
+
+            .info-grid {
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              gap: 10px 16px;
+            }
+
+            .info-item {
+              display: flex;
+              flex-direction: column;
+              gap: 2px;
+            }
+
+            .label {
+              font-size: 11px;
+              font-weight: 600;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+              color: #6b7280;
+            }
+
+            .value {
+              font-size: 14px;
+              color: #0f172a;
+            }
+
+            .payment-details {
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              padding: 14px;
+            }
+
+            .payment-row.total {
+              border-top: 1px solid #cbd5e1;
+              margin-top: 8px;
+              padding-top: 12px;
+            }
+
+            .payment-row.total .label {
+              font-size: 14px;
+            }
+
+            .payment-row.total .value {
+              font-size: 24px;
+              font-weight: 700;
+              color: #1d4ed8;
+            }
+
+            .notes {
+              margin-top: 10px;
+              padding: 10px 12px;
+              border-left: 3px solid #f59e0b;
+              background: #fffbeb;
+              border-radius: 6px;
+            }
+
+            .notes p {
+              margin: 0;
+            }
+
+            .ticket-footer {
+              text-align: center;
+              margin-top: 20px;
+              padding-top: 12px;
+            }
+
+            .thank-you {
+              margin: 0 0 8px;
+              font-size: 18px;
+              font-weight: 700;
+              color: #1d4ed8;
+            }
+
+            .footer-text {
+              margin: 4px 0;
+              font-size: 11px;
+              color: #64748b;
+            }
+
+            @page {
+              size: A4;
+              margin: 12mm;
+            }
+
+            @media print {
+              body {
+                padding: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+
+              .print-wrapper {
+                max-width: none;
+                margin: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-wrapper">${ticketElement.outerHTML}</div>
+        </body>
+      </html>
+    `;
+
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    printFrame.setAttribute('aria-hidden', 'true');
+
+    document.body.appendChild(printFrame);
+    printFrame.srcdoc = printHtml;
+
+    printFrame.onload = () => {
+      const frameWindow = printFrame.contentWindow;
+      if (!frameWindow) {
+        document.body.removeChild(printFrame);
+        return;
+      }
+
+      frameWindow.focus();
+      frameWindow.print();
+
+      setTimeout(() => {
+        if (printFrame.parentNode) {
+          printFrame.parentNode.removeChild(printFrame);
+        }
+      }, 500);
+    };
   }
 
   goBack(): void {
-    this.router.navigate(['/billing/invoices']);
+    this.router.navigate(['/dashboard', 'billing']);
   }
 
   getPaymentMethodLabel(method: PaymentMethod): string {
