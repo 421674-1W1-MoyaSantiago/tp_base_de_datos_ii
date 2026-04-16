@@ -356,7 +356,8 @@ export class InvoiceFormComponent implements OnInit {
         error: (error) => {
           console.error('Error creating invoice:', error);
           this.submitting.set(false);
-          this.snackBar.open('Error al generar la factura', 'Cerrar', { duration: 3000 });
+          const message = error?.error?.message || 'Error al generar la factura';
+          this.snackBar.open(message, 'Cerrar', { duration: 4000 });
         }
       });
     }

@@ -10,10 +10,41 @@ import { Invoice, PaymentMethod, SalesReport } from '../models/models';
 export class InvoiceService {
   private http = inject(HttpClient);
 
-  createInvoice(serviceOrderId: string, paymentMethod: PaymentMethod, notes?: string): Observable<Invoice> {
+  private normalizePaymentMethod(paymentMethod: PaymentMethod | string): PaymentMethod {
+    const normalized = String(paymentMethod ?? '')
+      .trim()
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '_');
+
+    if (normalized === 'CASH' || normalized === 'EFECTIVO') {
+      return PaymentMethod.CASH;
+    }
+
+    if (
+      normalized === 'CARD' ||
+      normalized === 'TARJETA' ||
+      normalized === 'DEBIT_CARD' ||
+      normalized === 'CREDIT_CARD' ||
+      normalized === 'DEBITO_CREDITO'
+    ) {
+      return PaymentMethod.CARD;
+    }
+
+    if (normalized === 'TRANSFER' || normalized === 'TRANSFERENCIA' || normalized === 'BANK_TRANSFER') {
+      return PaymentMethod.TRANSFER;
+    }
+
+    return paymentMethod as PaymentMethod;
+  }
+
+  createInvoice(serviceOrderId: string, paymentMethod: PaymentMethod | string, notes?: string): Observable<Invoice> {
+    const normalizedPaymentMethod = this.normalizePaymentMethod(paymentMethod);
+
     return this.http.post<Invoice>(`${environment.apiUrl}/invoices`, {
       serviceOrderId,
-      paymentMethod,
+      paymentMethod: normalizedPaymentMethod,
       notes
     });
   }

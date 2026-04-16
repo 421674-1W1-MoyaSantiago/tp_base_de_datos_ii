@@ -10,15 +10,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-<<<<<<< HEAD
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-=======
-import { Router } from '@angular/router';
->>>>>>> develop
 import { WashService } from '../../core/services/wash.service';
 import { InvoiceService } from '../../core/services/invoice.service';
 import { InvoiceModalComponent } from '../../shared/components/invoice-modal.component';
-import { ServiceOrder, ServiceStatus, ServiceType } from '../../core/models/models';
+import { Invoice, ServiceOrder, ServiceStatus, ServiceType } from '../../core/models/models';
 import { WashCardComponent } from './wash-card.component';
 
 @Component({
@@ -174,6 +170,48 @@ import { WashCardComponent } from './wash-card.component';
           </div>
         }
       </div>
+
+      <div class="analytics-grid">
+        <section class="chart-card">
+          <div class="chart-header">
+            <h2>Ingresos del Mes</h2>
+            <span class="chart-subtitle">{{ currentMonthLabel() }}</span>
+          </div>
+
+          <div class="bar-chart" [style.--bar-count]="monthlyRevenueBars().length">
+            @for (bar of monthlyRevenueBars(); track bar.day) {
+              <div class="bar-item">
+                <span class="bar-value">{{ bar.amount > 0 ? formatCurrency(bar.amount) : '' }}</span>
+                <div class="bar-track">
+                  <div class="bar-fill" [style.height.%]="bar.ratio"></div>
+                </div>
+                <span class="bar-label">{{ bar.day }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="chart-card">
+          <div class="chart-header">
+            <h2>Estado de Lavados</h2>
+            <span class="chart-subtitle">{{ washStatusPieData().total }} órdenes</span>
+          </div>
+
+          <div class="pie-content">
+            <div class="pie-ring" [style.background]="washStatusPieData().gradient"></div>
+
+            <div class="pie-legend">
+              @for (slice of washStatusPieData().slices; track slice.status) {
+                <div class="legend-row">
+                  <span class="legend-color" [style.background]="slice.color"></span>
+                  <span class="legend-label">{{ slice.label }}</span>
+                  <span class="legend-value">{{ slice.count }} ({{ slice.percentage }}%)</span>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   `,
   styles: [`
@@ -187,6 +225,151 @@ import { WashCardComponent } from './wash-card.component';
       margin-bottom: 1.5rem;
       color: #2c3e50;
       font-weight: 600;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-card {
+      background: linear-gradient(160deg, #ffffff 0%, #f6f9ff 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .chart-header h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .chart-subtitle {
+      color: #64748b;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(var(--bar-count), minmax(0, 1fr));
+      gap: 0.28rem;
+      align-items: end;
+      min-height: 180px;
+      width: 100%;
+      overflow: hidden;
+      padding-bottom: 0.45rem;
+    }
+
+    .bar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 0;
+    }
+
+    .bar-value {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #334155;
+      min-height: 16px;
+    }
+
+    .bar-track {
+      width: 100%;
+      max-width: 22px;
+      height: 110px;
+      border-radius: 10px;
+      border: 1px solid #dbe3ee;
+      background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(180deg, #0ea5e9 0%, #1976d2 100%);
+      transition: height 300ms ease;
+    }
+
+    .bar-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .pie-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-height: 180px;
+    }
+
+    .pie-ring {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.8), 0 6px 18px rgba(15, 23, 42, 0.12);
+      flex-shrink: 0;
+    }
+
+    .pie-ring::after {
+      content: '';
+      position: absolute;
+      inset: 28px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    .pie-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      flex: 1;
+    }
+
+    .legend-row {
+      display: grid;
+      grid-template-columns: 12px 1fr auto;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.83rem;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .legend-label {
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .legend-value {
+      color: #0f172a;
+      font-weight: 700;
     }
     
     .filters-section {
@@ -335,12 +518,21 @@ import { WashCardComponent } from './wash-card.component';
     }
     
     @media (max-width: 1400px) {
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+
       .kanban-board {
         grid-template-columns: repeat(2, 1fr);
       }
     }
     
     @media (max-width: 768px) {
+      .pie-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
       .kanban-board {
         grid-template-columns: 1fr;
       }
@@ -356,13 +548,10 @@ export class WashBoardComponent implements OnInit {
   private washService = inject(WashService);
   private invoiceService = inject(InvoiceService);
   private snackBar = inject(MatSnackBar);
-<<<<<<< HEAD
   private dialog = inject(MatDialog);
-=======
-  private router = inject(Router);
->>>>>>> develop
 
   serviceOrders = this.washService.serviceOrders;
+  invoices = signal<Invoice[]>([]);
 
   // Filter signals
   selectedFilterType = signal<string>('all');
@@ -378,6 +567,87 @@ export class WashBoardComponent implements OnInit {
     { value: ServiceStatus.COMPLETED, label: 'Completado', color: '#27ae60' },
     { value: ServiceStatus.DELIVERED, label: 'Entregado', color: '#16a085' }
   ];
+
+  currentMonthLabel = computed(() => {
+    return new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(new Date());
+  });
+
+  monthlyRevenueBars = computed(() => {
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const dayBuckets = Array.from({ length: daysInMonth }, () => 0);
+    this.invoices().forEach(invoice => {
+      const issuedAt = new Date(invoice.issuedAt);
+      if (issuedAt.getMonth() !== month || issuedAt.getFullYear() !== year) {
+        return;
+      }
+
+      const dayIndex = issuedAt.getDate() - 1;
+      dayBuckets[dayIndex] += Number(invoice.amount || 0);
+    });
+
+    const maxValue = Math.max(...dayBuckets, 1);
+    return dayBuckets.map((amount, index) => ({
+      day: index + 1,
+      amount,
+      ratio: amount > 0 ? Math.max((amount / maxValue) * 100, 4) : 0
+    }));
+  });
+
+  washStatusPieData = computed(() => {
+    const dashboardOrders = this.filteredOrders();
+    const slices = [
+      { status: ServiceStatus.PENDING, label: 'Pendiente', color: '#94a3b8', count: 0, percentage: 0 },
+      { status: ServiceStatus.IN_PROGRESS, label: 'En proceso', color: '#0ea5e9', count: 0, percentage: 0 },
+      { status: ServiceStatus.COMPLETED, label: 'Completado', color: '#22c55e', count: 0, percentage: 0 },
+      { status: ServiceStatus.DELIVERED, label: 'Entregado', color: '#0f766e', count: 0, percentage: 0 }
+    ];
+
+    dashboardOrders.forEach(order => {
+      const slice = slices.find(item => item.status === order.status);
+      if (slice) {
+        slice.count += 1;
+      }
+    });
+
+    const total = slices.reduce((acc, item) => acc + item.count, 0);
+    let accPercent = 0;
+    const gradientParts = slices
+      .filter(item => item.count > 0)
+      .map(item => {
+        const start = accPercent;
+        const percentage = total > 0 ? Math.round((item.count / total) * 100) : 0;
+        accPercent += percentage;
+        item.percentage = percentage;
+        return `${item.color} ${start}% ${Math.min(accPercent, 100)}%`;
+      });
+
+    if (gradientParts.length === 0) {
+      return {
+        total,
+        slices,
+        gradient: 'conic-gradient(#e2e8f0 0% 100%)'
+      };
+    }
+
+    // Ensure 100% coverage in the conic gradient.
+    const finalGradient = `conic-gradient(${gradientParts.join(', ')}, #e2e8f0 ${Math.min(accPercent, 100)}% 100%)`;
+
+    slices.forEach(item => {
+      if (total > 0 && item.count > 0 && item.percentage === 0) {
+        item.percentage = 1;
+      }
+    });
+
+    return {
+      total,
+      slices,
+      gradient: finalGradient
+    };
+  });
 
   visibleStatuses = computed(() => {
     if (this.selectedFilterType() === 'status' && this.filterStatus()) {
@@ -431,6 +701,27 @@ export class WashBoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.washService.loadServiceOrders();
+    this.loadInvoicesForDashboard();
+  }
+
+  loadInvoicesForDashboard(): void {
+    this.invoiceService.getInvoices(0, 1000).subscribe({
+      next: (response) => {
+        const invoices = Array.isArray(response) ? response : (response?.content || []);
+        this.invoices.set(invoices);
+      },
+      error: () => {
+        this.invoices.set([]);
+      }
+    });
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      maximumFractionDigits: 0
+    }).format(value || 0);
   }
 
   getFilteredOrdersByStatus(status: ServiceStatus): ServiceOrder[] {
@@ -451,50 +742,7 @@ export class WashBoardComponent implements OnInit {
     const order = this.serviceOrders().find(o => o.id === event.orderId);
     if (!order) return;
     
-<<<<<<< HEAD
     this.washService.updateStatus(event.orderId, event.newStatus).subscribe({
-=======
-    if (this.isValidTransition(order.status, event.newStatus)) {
-      this.washService.updateStatus(event.orderId, event.newStatus).subscribe({
-        next: () => {
-          this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
-        },
-        error: () => {
-          this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 3000 });
-        }
-      });
-    } else {
-      this.snackBar.open('Transición de estado no válida', 'Cerrar', { duration: 3000 });
-    }
-  }
-
-  handleInvoice(orderId: string): void {
-    this.router.navigate(['/dashboard', 'billing', 'invoice-form', orderId]);
-  }
-
-  onDrop(event: CdkDragDrop<ServiceOrder[]>): void {
-    const order = event.item.data as ServiceOrder;
-    const newStatus = event.container.id as ServiceStatus;
-    
-    if (event.previousContainer === event.container) {
-      // Same column - just reorder
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      return;
-    }
-    
-    // Validate transition
-    if (!this.isValidTransition(order.status, newStatus)) {
-      this.snackBar.open(
-        `No se puede mover de ${this.getStatusLabel(order.status)} a ${this.getStatusLabel(newStatus)}`,
-        'Cerrar',
-        { duration: 3000 }
-      );
-      return;
-    }
-    
-    // Update status via service
-    this.washService.updateStatus(order.id!, newStatus).subscribe({
->>>>>>> develop
       next: () => {
         this.snackBar.open('Estado actualizado correctamente', 'OK', { duration: 2000 });
       },
@@ -525,10 +773,12 @@ export class WashBoardComponent implements OnInit {
               duration: 5000
             });
             this.washService.loadServiceOrders();
+            this.loadInvoicesForDashboard();
           },
           error: (err) => {
             console.error('Error creating invoice:', err);
-            this.snackBar.open('Error al generar la factura', 'Cerrar', { duration: 3000 });
+            const message = err?.error?.message || 'Error al generar la factura';
+            this.snackBar.open(message, 'Cerrar', { duration: 4000 });
           }
         });
       }

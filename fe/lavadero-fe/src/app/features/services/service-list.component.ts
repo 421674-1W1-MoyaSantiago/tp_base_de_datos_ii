@@ -183,7 +183,10 @@ export class ServiceListComponent implements OnInit {
             this.snackBar.open(`Factura #${invoice.invoiceNumber} generada exitosamente`, 'OK', { duration: 5000 });
             this.washService.loadServiceOrders();
           },
-          error: () => this.snackBar.open('Error al facturar', 'Cerrar', { duration: 3000 })
+          error: (err) => {
+            const message = err?.error?.message || 'Error al facturar';
+            this.snackBar.open(message, 'Cerrar', { duration: 4000 });
+          }
         });
       }
     });
